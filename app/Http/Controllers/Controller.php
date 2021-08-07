@@ -11,13 +11,13 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected function responseSuccess($msg, $arr = null, $status)
+    protected function responseSuccess($msg, $arr = null, $status = 200)
     {
         $res = [
             'status' => true,
             'message' => ($msg == "") ? "Sukses" : $msg,
         ];
-        
+
         if($arr) {
             $res['data'] = $arr;
         }
@@ -31,7 +31,7 @@ class Controller extends BaseController
             'status' => false,
             'message' => (!$msg) ? "Gagal" : $msg,
         ];
-        
+
         if($arr) {
             $res['data'] = $arr;
         }
