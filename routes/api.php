@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\QuizController;
+use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,7 +29,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::group(['prefix' => 'guru', 'middleware' => ['guru']], function () {
-
+        Route::resource('quizzes', QuizController::class)->parameters([
+            'quizzes' => 'quizzes:slug',
+        ]);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);

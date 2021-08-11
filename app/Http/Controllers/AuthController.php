@@ -16,18 +16,26 @@ class AuthController extends Controller
         $validator = Validator::make($input, [
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed'
+            'password' => 'required|string|confirmed',
+            'avatar' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         if ($validator->fails()) {
             return $this->responseFailed('Validasi error', $validator->errors(), 400);
+        }
+
+        if ($request->hasFile('avatar')) {
+            $input['avatar'] = time().'.'.request()->avatar->getClientOriginalExtension();
+            
+            request()->avatar->move(public_path('assets/images/avatar'), $input['avatar']);
         }
         
         $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => bcrypt($input['password']),
-            'role' => 'siswa'
+            'role' => 'siswa',
+            'avatar' => $input['avatar']
         ]);
 
         $token = $user->createToken('quizapptoken')->plainTextToken;
@@ -45,18 +53,26 @@ class AuthController extends Controller
         $validator = Validator::make($input, [
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed'
+            'password' => 'required|string|confirmed',
+            'avatar' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         if ($validator->fails()) {
             return $this->responseFailed('Validasi error', $validator->errors(), 400);
+        }
+
+        if ($request->hasFile('avatar')) {
+            $input['avatar'] = time().'.'.request()->avatar->getClientOriginalExtension();
+            
+            request()->avatar->move(public_path('assets/images/avatar'), $input['avatar']);
         }
         
         $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => bcrypt($input['password']),
-            'role' => 'guru'
+            'role' => 'guru',
+            'avatar' => $input['avatar']
         ]);
 
         $token = $user->createToken('quizapptoken')->plainTextToken;
