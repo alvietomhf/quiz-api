@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FeedController;
 use App\Http\Controllers\QuizController;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
@@ -26,6 +27,10 @@ Route::post('register/teacher', [AuthController::class, 'teacherRegister']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('quizzes', [QuizController::class, 'index']);
     Route::get('quizzes/{quizzes:slug}', [QuizController::class, 'show']);
+
+    Route::post('feeds', [FeedController::class, 'feedStore']);
+    Route::post('feeds/{feedId}/reply', [FeedController::class, 'replyStore']);
+    Route::get('feeds', [FeedController::class, 'feedIndex']);
 
     Route::group(['prefix' => 'siswa', 'middleware' => ['siswa']], function () {
 

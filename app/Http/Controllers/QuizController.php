@@ -20,7 +20,17 @@ class QuizController extends Controller
      */
     public function index()
     {
-        $data = request()->type == 'quiz' ? Quiz::where('type', 'quiz')->with('questions.options')->get() : Quiz::where('type', 'essay')->with('questions')->get();
+        if(request()->type == 'quiz') {
+            $data = Quiz::where('type', 'quiz')->with(['questions' => function($q) {
+                            $q->select('id', 'quiz_id', 'question', 'image');
+                        }, 'questions.options' => function($q) {
+                            $q->select('id', 'question_id', 'title', 'correct');
+                        }])->get();
+        } else {
+            $data = Quiz::where('type', 'essay')->with(['questions' => function($q) {
+                            $q->select('id', 'quiz_id', 'question', 'image');
+                        }])->get();
+        }
 
         return $this->responseSuccess('Data', ($data ?? null));
     }
@@ -93,10 +103,18 @@ class QuizController extends Controller
             }
             
             DB::commit();
-            
 
-            $query = Quiz::where('slug', $quiz->slug);
-            $data = $quiz->type == 'quiz' ? $query->with('questions.options')->first() : $query->with('questions')->first();
+            if($quiz->type == 'quiz') {
+                $data = Quiz::where('slug', $quiz->slug)->with(['questions' => function($q) {
+                                $q->select('id', 'quiz_id', 'question', 'image');
+                            }, 'questions.options' => function($q) {
+                                $q->select('id', 'question_id', 'title', 'correct');
+                            }])->first();
+            } else {
+                $data = Quiz::where('slug', $quiz->slug)->with(['questions' => function($q) {
+                                $q->select('id', 'quiz_id', 'question', 'image');
+                            }])->first();
+            }
 
             return $this->responseSuccess('Data berhasil dibuat', $data, 201);
         } catch(\Exception $e) {
@@ -116,8 +134,17 @@ class QuizController extends Controller
         $quiz = Quiz::where('slug', $slug)->first();
         if(!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
 
-        $query = Quiz::where('slug', $quiz->slug);
-        $data = $quiz->type == 'quiz' ? $query->with('questions.options')->first() : $query->with('questions')->first();
+        if($quiz->type == 'quiz') {
+            $data = Quiz::where('slug', $quiz->slug)->with(['questions' => function($q) {
+                            $q->select('id', 'quiz_id', 'question', 'image');
+                        }, 'questions.options' => function($q) {
+                            $q->select('id', 'question_id', 'title', 'correct');
+                        }])->first();
+        } else {
+            $data = Quiz::where('slug', $quiz->slug)->with(['questions' => function($q) {
+                            $q->select('id', 'quiz_id', 'question', 'image');
+                        }])->first();
+        }
 
         return $this->responseSuccess('Detail data', $data);
     }
@@ -199,8 +226,17 @@ class QuizController extends Controller
 
             DB::commit();
             
-            $query = Quiz::where('slug', $quiz->slug);
-            $data = $quiz->type == 'quiz' ? $query->with('questions.options')->first() : $query->with('questions')->first();
+            if($quiz->type == 'quiz') {
+                $data = Quiz::where('slug', $quiz->slug)->with(['questions' => function($q) {
+                                $q->select('id', 'quiz_id', 'question', 'image');
+                            }, 'questions.options' => function($q) {
+                                $q->select('id', 'question_id', 'title', 'correct');
+                            }])->first();
+            } else {
+                $data = Quiz::where('slug', $quiz->slug)->with(['questions' => function($q) {
+                                $q->select('id', 'quiz_id', 'question', 'image');
+                            }])->first();
+            }
     
             return $this->responseSuccess('Data berhasil diubah', $data, 200);
         } catch(\Exception $e) {
