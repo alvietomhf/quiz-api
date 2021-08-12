@@ -17,6 +17,7 @@ class CreateQuizzesTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug');
+            $table->enum('type', ['quiz', 'essay']);
             $table->timestamps();
         });
     }

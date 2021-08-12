@@ -24,14 +24,17 @@ Route::post('register/teacher', [AuthController::class, 'teacherRegister']);
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('quizzes', [QuizController::class, 'index']);
+    Route::get('quizzes/{quizzes:slug}', [QuizController::class, 'show']);
+
     Route::group(['prefix' => 'siswa', 'middleware' => ['siswa']], function () {
 
     });
 
     Route::group(['prefix' => 'guru', 'middleware' => ['guru']], function () {
-        Route::resource('quizzes', QuizController::class)->parameters([
-            'quizzes' => 'quizzes:slug',
-        ]);
+        Route::post('quizzes', [QuizController::class, 'store']);
+        Route::put('quizzes/{quizzes:slug}', [QuizController::class, 'update']);
+        Route::delete('quizzes/{quizzes:slug}', [QuizController::class, 'destroy']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);

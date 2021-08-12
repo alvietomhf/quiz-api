@@ -20,7 +20,7 @@ class QuizController extends Controller
      */
     public function index()
     {
-        $data = Quiz::with('questions.options')->get();
+        $data = request()->type == 'quiz' ? Quiz::where('type', 'quiz')->with('questions.options')->get() : Quiz::where('type', 'essay')->with('questions')->get();
 
         return $this->responseSuccess('Data', ($data ?? null));
     }
@@ -45,6 +45,7 @@ class QuizController extends Controller
     {
         $input = $request->all();
         $validator = Validator::make($input, [
+            'type' => 'required|string',
             'title' => 'required|string',
             'questions' => 'required|array|between:1,10',
             'questions.*.question' => 'required|string',
@@ -56,13 +57,14 @@ class QuizController extends Controller
         if ($validator->fails()) {
             return $this->responseFailed('Validasi error', $validator->errors(), 400);
         }
-        
+
         try {
             DB::beginTransaction();
 
             $quiz = Quiz::create([
                 'title' => $input['title'],
-                'slug' =>  Str::slug($input['title'])
+                'slug' =>  Str::slug($input['title']),
+                'type' => $input['type']
             ]);
     
             foreach($input['questions'] as $key => $questionValue) {
@@ -78,19 +80,24 @@ class QuizController extends Controller
                     'question' => $questionValue['question'],
                     'image' => $questionValue['image']
                 ]);
-                foreach($questionValue['options'] as $optionValue) {
-                    Option::create([
-                        'question_id' => $question->id,
-                        'title' => $optionValue['title'],
-                        'correct' => +$optionValue['correct']
-                    ]);
+
+                if($quiz->type == 'quiz') {
+                    foreach($questionValue['options'] as $optionValue) {
+                        Option::create([
+                            'question_id' => $question->id,
+                            'title' => $optionValue['title'],
+                            'correct' => +$optionValue['correct']
+                        ]);
+                    }
                 }
             }
             
             DB::commit();
             
-            $data = Quiz::where('slug', $quiz->slug)->with('questions.options')->first();
-            
+
+            $query = Quiz::where('slug', $quiz->slug);
+            $data = $quiz->type == 'quiz' ? $query->with('questions.options')->first() : $query->with('questions')->first();
+
             return $this->responseSuccess('Data berhasil dibuat', $data, 201);
         } catch(\Exception $e) {
             DB::rollBack();
@@ -106,8 +113,11 @@ class QuizController extends Controller
      */
     public function show($slug)
     {
-        $data = Quiz::where('slug', $slug)->with('questions.options')->first();
-        if(!$data) return $this->responseFailed('Data tidak ditemukan', '', 404);
+        $quiz = Quiz::where('slug', $slug)->first();
+        if(!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
+
+        $query = Quiz::where('slug', $quiz->slug);
+        $data = $quiz->type == 'quiz' ? $query->with('questions.options')->first() : $query->with('questions')->first();
 
         return $this->responseSuccess('Detail data', $data);
     }
@@ -132,8 +142,11 @@ class QuizController extends Controller
      */
     public function update(Request $request, $slug)
     {
-        $quiz = Quiz::where('slug', $slug)->with('questions.options')->first();
+        $quiz = Quiz::where('slug', $slug)->with('questions')->first();
         if(!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
+        if($quiz->type == 'quiz') {
+            $quiz = Quiz::where('slug', $slug)->with('questions.options')->first();
+        }
         
         $input = $request->all();
         $validator = Validator::make($input, [
@@ -173,23 +186,26 @@ class QuizController extends Controller
                                 'image' => $questionValue['image']
                             ]);
     
-                foreach($questionValue['options'] as $key2 => $optionValue) {
-                    Option::where('id', $quiz->questions[$key]->options[$key2]->id) 
-                            ->update([
-                                'title' => $optionValue['title'],
-                                'correct' => +$optionValue['correct']
-                            ]);
+                if($quiz->type == 'quiz') {
+                    foreach($questionValue['options'] as $key2 => $optionValue) {
+                        Option::where('id', $quiz->questions[$key]->options[$key2]->id) 
+                                ->update([
+                                    'title' => $optionValue['title'],
+                                    'correct' => +$optionValue['correct']
+                                ]);
+                    }
                 }
             }
 
             DB::commit();
             
-            $data = Quiz::where('slug', $quiz->slug)->with('questions.options')->first();
+            $query = Quiz::where('slug', $quiz->slug);
+            $data = $quiz->type == 'quiz' ? $query->with('questions.options')->first() : $query->with('questions')->first();
     
             return $this->responseSuccess('Data berhasil diubah', $data, 200);
         } catch(\Exception $e) {
             DB::rollBack();
-            return $this->responseFailed('Data gagal dibuat');
+            return $this->responseFailed('Data gagal diubah');
         }
     }
 
@@ -201,7 +217,7 @@ class QuizController extends Controller
      */
     public function destroy($slug)
     {
-        $quiz = Quiz::where('slug', $slug)->with('questions.options')->first();
+        $quiz = Quiz::where('slug', $slug)->with('questions')->first();
         if(!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
 
         foreach($quiz->questions as $questionValue) {
