@@ -61,7 +61,7 @@ class QuizController extends Controller
             'questions.*.question' => 'required|string',
             'questions.*.image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'questions.*.options.*.title' => 'required|string',
-            'questions.*.options.*.correct' => 'required',
+            'questions.*.options.*.correct' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -76,15 +76,15 @@ class QuizController extends Controller
                 'slug' =>  Str::slug($input['title']),
                 'type' => $input['type']
             ]);
-    
+
             foreach($input['questions'] as $key => $questionValue) {
                 $questionValue['image'] = null;
                 if ($request->hasFile('questions.'. $key .'.image')) {
                     $questionValue['image'] = time().'.'.$request->questions[$key]['image']->getClientOriginalExtension();
-                    
+
                     $request->questions[$key]['image']->move(public_path('assets/images/quiz'), $questionValue['image']);
                 }
-                
+
                 $question = Question::create([
                     'quiz_id' => $quiz->id,
                     'question' => $questionValue['question'],
@@ -101,7 +101,7 @@ class QuizController extends Controller
                     }
                 }
             }
-            
+
             DB::commit();
 
             if($quiz->type == 'quiz') {
@@ -174,7 +174,7 @@ class QuizController extends Controller
         if($quiz->type == 'quiz') {
             $quiz = Quiz::where('slug', $slug)->with('questions.options')->first();
         }
-        
+
         $input = $request->all();
         $validator = Validator::make($input, [
             'title' => 'required|string',
@@ -184,7 +184,7 @@ class QuizController extends Controller
             'questions.*.options.*.title' => 'required|string',
             'questions.*.options.*.correct' => 'required',
         ]);
-        
+
         if ($validator->fails()) {
             return $this->responseFailed('Validasi error', $validator->errors(), 400);
         }
@@ -195,27 +195,27 @@ class QuizController extends Controller
             $quiz->update([
                 'title' => $input['title']
             ]);
-    
+
             foreach($input['questions'] as $key => $questionValue) {
                 $oldImage = $quiz->questions[$key]->image;
                 if ($request->hasFile('questions.'. $key .'.image')) {
                     File::delete('assets/images/quiz/'.$oldImage);
                     $questionValue['image'] = time().'.'.$request->questions[$key]['image']->getClientOriginalExtension();
-                    
+
                     $request->questions[$key]['image']->move(public_path('assets/images/quiz'), $questionValue['image']);
                 } else {
                     $questionValue['image'] = $oldImage;
                 }
-                
+
                 Question::where('id', $quiz->questions[$key]->id)
                             ->update([
                                 'question' => $questionValue['question'],
                                 'image' => $questionValue['image']
                             ]);
-    
+
                 if($quiz->type == 'quiz') {
                     foreach($questionValue['options'] as $key2 => $optionValue) {
-                        Option::where('id', $quiz->questions[$key]->options[$key2]->id) 
+                        Option::where('id', $quiz->questions[$key]->options[$key2]->id)
                                 ->update([
                                     'title' => $optionValue['title'],
                                     'correct' => +$optionValue['correct']
@@ -225,7 +225,7 @@ class QuizController extends Controller
             }
 
             DB::commit();
-            
+
             if($quiz->type == 'quiz') {
                 $data = Quiz::where('slug', $quiz->slug)->with(['questions' => function($q) {
                                 $q->select('id', 'quiz_id', 'question', 'image');
@@ -237,7 +237,7 @@ class QuizController extends Controller
                                 $q->select('id', 'quiz_id', 'question', 'image');
                             }])->first();
             }
-    
+
             return $this->responseSuccess('Data berhasil diubah', $data, 200);
         } catch(\Exception $e) {
             DB::rollBack();
@@ -261,7 +261,7 @@ class QuizController extends Controller
                 File::delete('assets/images/quiz/'.$questionValue->image);
             }
         }
-        
+
         $quiz->delete();
 
         return $this->responseSuccess('Data berhasil dihapus');
