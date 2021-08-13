@@ -68,6 +68,9 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        public_path('assets\images\quiz') => storage_path('app/assets/images/quiz'),
+        public_path('assets\images\feed') => storage_path('app/assets/images/feed'),
+        public_path('assets\images\avatar') => storage_path('app/assets/images/avatar'),
     ],
 
 ];
