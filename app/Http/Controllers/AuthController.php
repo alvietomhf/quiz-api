@@ -27,7 +27,7 @@ class AuthController extends Controller
         if ($request->hasFile('avatar')) {
             $input['avatar'] = time().'.'.request()->avatar->getClientOriginalExtension();
             
-            request()->avatar->move(public_path('assets/images/avatar'), $input['avatar']);
+            \Image::make(request()->avatar)->save(public_path('assets/images/avatar/').$input['avatar']);
         }
         
         $user = User::create([
@@ -64,7 +64,7 @@ class AuthController extends Controller
         if ($request->hasFile('avatar')) {
             $input['avatar'] = time().'.'.request()->avatar->getClientOriginalExtension();
             
-            request()->avatar->move(public_path('assets/images/avatar'), $input['avatar']);
+            \Image::make(request()->avatar)->save(public_path('assets/images/avatar/').$input['avatar']);
         }
         
         $user = User::create([

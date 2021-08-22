@@ -82,7 +82,7 @@ class QuizController extends Controller
                 if ($request->hasFile('questions.'. $key .'.image')) {
                     $questionValue['image'] = time().'.'.$request->questions[$key]['image']->getClientOriginalExtension();
                     
-                    $request->questions[$key]['image']->move(public_path('assets/images/quiz'), $questionValue['image']);
+                    \Image::make($request->questions[$key]['image'])->save(public_path('assets/images/quiz/').$questionValue['image']);
                 }
                 
                 $question = Question::create([
@@ -202,7 +202,7 @@ class QuizController extends Controller
                     File::delete('assets/images/quiz/'.$oldImage);
                     $questionValue['image'] = time().'.'.$request->questions[$key]['image']->getClientOriginalExtension();
                     
-                    $request->questions[$key]['image']->move(public_path('assets/images/quiz'), $questionValue['image']);
+                    \Image::make($request->questions[$key]['image'])->save(public_path('assets/images/quiz/').$questionValue['image']);
                 } else {
                     $questionValue['image'] = $oldImage;
                 }
