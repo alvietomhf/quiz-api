@@ -57,6 +57,7 @@ class QuizController extends Controller
         $validator = Validator::make($input, [
             'type' => 'required|string',
             'title' => 'required|string',
+            'deadline' => 'required|date',
             'questions' => 'required|array|between:1,10',
             'questions.*.question' => 'required|string',
             'questions.*.image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -74,7 +75,8 @@ class QuizController extends Controller
             $quiz = Quiz::create([
                 'title' => $input['title'],
                 'slug' =>  Str::slug($input['title']),
-                'type' => $input['type']
+                'type' => $input['type'],
+                'deadline' => $input['deadline']
             ]);
 
             foreach ($input['questions'] as $key => $questionValue) {
@@ -182,6 +184,7 @@ class QuizController extends Controller
         $input = $request->all();
         $validator = Validator::make($input, [
             'title' => 'required|string',
+            'deadline' => 'required|date',
             'questions' => 'required|array|between:1,10',
             'questions.*.question' => 'required|string',
             'questions.*.image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -197,7 +200,8 @@ class QuizController extends Controller
             DB::beginTransaction();
 
             $quiz->update([
-                'title' => $input['title']
+                'title' => $input['title'],
+                'deadline' => $input['deadline']
             ]);
 
             foreach ($input['questions'] as $key => $questionValue) {
