@@ -82,9 +82,10 @@ class QuizController extends Controller
                 // echo($questionValue['image']);
                 if ($request->hasFile('questions.' . $key . '.image')) {
                     // $questionValue['image'] = time().'.'.$request->questions[$key]['image']->getClientOriginalExtension();
-                    $questionValue['image'] = time() . '.' . $request->questions[$key]['image']->getClientOriginalName();
+                    // $questionValue['image'] = time() . '.' . $request->questions[$key]['image']->getClientOriginalName();
+                    $questionValue['image'] = time() . '.' . uniqid() . '.' . $request->questions[$key]['image']->getClientOriginalExtension();
 
-                    \Image::make($request->questions[$key]['image'])->save(public_path('assets/images/quiz/').$questionValue['image']);
+                    \Image::make($request->questions[$key]['image'])->save(public_path('assets/images/quiz/') . $questionValue['image']);
                     // $request->questions[$key]['image']->save(public_path('assets/images/quiz/') . $questionValue['image']);
                 }
 
