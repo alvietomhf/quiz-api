@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\UserController;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,7 +22,6 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register/student', [AuthController::class, 'studentRegister']);
-Route::post('register/teacher', [AuthController::class, 'teacherRegister']);
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -33,7 +33,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('feeds', [FeedController::class, 'feedIndex']);
 
     Route::group(['prefix' => 'siswa', 'middleware' => ['siswa']], function () {
-
     });
 
     Route::group(['prefix' => 'guru', 'middleware' => ['guru']], function () {
@@ -41,6 +40,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::put('quizzes/{quizzes:slug}', [QuizController::class, 'update']);
         Route::delete('quizzes/{quizzes:slug}', [QuizController::class, 'destroy']);
     });
+
+    Route::get('users', [UserController::class, 'index']);
+    Route::post('users', [UserController::class, 'store'])->middleware(['admin']);
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
