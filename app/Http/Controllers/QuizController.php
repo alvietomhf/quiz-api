@@ -208,7 +208,8 @@ class QuizController extends Controller
                 $oldImage = $quiz->questions[$key]->image;
                 if ($request->hasFile('questions.' . $key . '.image')) {
                     File::delete('assets/images/quiz/' . $oldImage);
-                    $questionValue['image'] = time() . '.' . $request->questions[$key]['image']->getClientOriginalExtension();
+                    // $questionValue['image'] = time() . '.' . $request->questions[$key]['image']->getClientOriginalExtension();
+                    $questionValue['image'] = time() . '.' . uniqid() . '.' . $request->questions[$key]['image']->getClientOriginalExtension();
 
                     \Image::make($request->questions[$key]['image'])->save(public_path('assets/images/quiz/') . $questionValue['image']);
                 } else {

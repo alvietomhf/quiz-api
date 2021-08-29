@@ -32,9 +32,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('feeds/{feedId}/reply', [FeedController::class, 'replyStore']);
     Route::get('feeds', [FeedController::class, 'feedIndex']);
 
-    Route::group(['prefix' => 'siswa', 'middleware' => ['siswa']], function () {
-
-    });
+    Route::group(['prefix' => 'siswa', 'middleware' => ['siswa']], function () { });
 
     Route::group(['prefix' => 'guru', 'middleware' => ['guru']], function () {
         Route::post('quizzes', [QuizController::class, 'store']);
