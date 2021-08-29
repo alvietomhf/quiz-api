@@ -41,7 +41,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::delete('quizzes/{quizzes:slug}', [QuizController::class, 'destroy']);
     });
 
-    Route::get('users', [UserController::class, 'index']);
+    Route::get('students', [UserController::class, 'studentIndex']);
+    Route::get('teachers', [UserController::class, 'teacherIndex']);
     Route::post('users', [UserController::class, 'store'])->middleware(['admin']);
 
     Route::post('logout', [AuthController::class, 'logout']);

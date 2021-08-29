@@ -8,30 +8,20 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function studentIndex()
     {
-        $student = User::select('id', 'name', 'email', 'avatar')->where('role', 'siswa')->get();
-        $teacher = User::select('id', 'name', 'email', 'avatar')->where('role', 'guru')->get();
+        $data = User::select('id', 'name', 'email', 'avatar')->where('role', 'siswa')->get();
 
-        $data = [
-            'siswa' => $student,
-            'guru' => $teacher
-        ];
-
-        return $this->responseSuccess('Data user', $data, 200);
+        return $this->responseSuccess('Data list siswa', $data, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    public function teacherIndex()
+    {
+        $data = User::select('id', 'name', 'email', 'avatar')->where('role', 'guru')->get();
+
+        return $this->responseSuccess('Data list guru', $data, 200);
+    }
+
     public function store(Request $request)
     {
         $input = $request->all();
@@ -67,24 +57,11 @@ class UserController extends Controller
         return $this->responseSuccess('Berhasil membuat data', $data, 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
