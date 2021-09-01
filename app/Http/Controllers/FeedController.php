@@ -31,9 +31,9 @@ class FeedController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $input['image'] = time().'.'.request()->image->getClientOriginalExtension();
+            $input['image'] = rand().'.'.request()->image->getClientOriginalExtension();
             
-            \Image::make(request()->image)->save(public_path('assets/images/feed/').$input['image']);
+            request()->image->move(public_path('assets/images/feed/'), $input['image']);
         }
         
         $data = Feed::create([
@@ -61,9 +61,9 @@ class FeedController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $input['image'] = time().'.'.request()->image->getClientOriginalExtension();
-            
-            \Image::make(request()->image)->save(public_path('assets/images/feed/').$input['image']);
+            $input['image'] = rand().'.'.request()->image->getClientOriginalExtension();
+
+            request()->image->move(public_path('assets/images/feed/'), $input['image']);
         }
         
         $data = FeedReply::create([

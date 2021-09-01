@@ -26,9 +26,9 @@ class AuthController extends Controller
         }
 
         if ($request->hasFile('avatar')) {
-            $input['avatar'] = time() . '.' . request()->avatar->getClientOriginalExtension();
+            $input['avatar'] = rand() . '.' . request()->avatar->getClientOriginalExtension();
 
-            \Image::make(request()->avatar)->save(public_path('assets/images/avatar/') . $input['avatar']);
+            request()->avatar->move(public_path('assets/images/avatar/'), $input['avatar']);
         }
 
         $user = User::create([

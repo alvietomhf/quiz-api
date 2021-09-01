@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\ResultController;
 use App\Http\Controllers\UserController;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
@@ -32,12 +33,20 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('feeds/{feedId}/reply', [FeedController::class, 'replyStore']);
     Route::get('feeds', [FeedController::class, 'feedIndex']);
 
-    Route::group(['prefix' => 'siswa', 'middleware' => ['siswa']], function () { });
+    Route::group(['prefix' => 'siswa', 'middleware' => ['siswa']], function () {
+        Route::post('result/{slug}/quiz', [ResultController::class, 'quizStore']);
+        Route::post('result/{slug}/essay', [ResultController::class, 'essayStore']);
+    });
 
     Route::group(['prefix' => 'guru', 'middleware' => ['guru']], function () {
         Route::post('quizzes', [QuizController::class, 'store']);
         Route::put('quizzes/{quizzes:slug}', [QuizController::class, 'update']);
         Route::delete('quizzes/{quizzes:slug}', [QuizController::class, 'destroy']);
+
+        Route::get('result/{slug}/notsubmitted', [ResultController::class, 'resultNotSubmitted']);
+        Route::get('result/{slug}/quiz', [ResultController::class, 'quizResultSubmitted']);
+        Route::get('result/{slug}/essay', [ResultController::class, 'essayResultSubmitted']);
+        Route::put('result/{id}', [ResultController::class, 'createScoreEssay']);
     });
 
     Route::get('students', [UserController::class, 'studentIndex']);

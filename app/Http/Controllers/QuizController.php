@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Option;
 use App\Models\Question;
 use App\Models\Quiz;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -81,14 +82,10 @@ class QuizController extends Controller
 
             foreach ($input['questions'] as $key => $questionValue) {
                 $questionValue['image'] = null;
-                // echo($questionValue['image']);
                 if ($request->hasFile('questions.' . $key . '.image')) {
-                    // $questionValue['image'] = time().'.'.$request->questions[$key]['image']->getClientOriginalExtension();
-                    // $questionValue['image'] = time() . '.' . $request->questions[$key]['image']->getClientOriginalName();
-                    $questionValue['image'] = time() . '.' . uniqid() . '.' . $request->questions[$key]['image']->getClientOriginalExtension();
+                    $questionValue['image'] = rand().'.'.$request->questions[$key]['image']->getClientOriginalExtension();
 
-                    \Image::make($request->questions[$key]['image'])->save(public_path('assets/images/quiz/') . $questionValue['image']);
-                    // $request->questions[$key]['image']->save(public_path('assets/images/quiz/') . $questionValue['image']);
+                    $request->questions[$key]['image']->move(public_path('assets/images/quiz/'), $questionValue['image']);
                 }
 
                 $question = Question::create([
@@ -208,10 +205,9 @@ class QuizController extends Controller
                 $oldImage = $quiz->questions[$key]->image;
                 if ($request->hasFile('questions.' . $key . '.image')) {
                     File::delete('assets/images/quiz/' . $oldImage);
-                    // $questionValue['image'] = time() . '.' . $request->questions[$key]['image']->getClientOriginalExtension();
-                    $questionValue['image'] = time() . '.' . uniqid() . '.' . $request->questions[$key]['image']->getClientOriginalExtension();
+                    $questionValue['image'] = rand() . '.' . $request->questions[$key]['image']->getClientOriginalExtension();
 
-                    \Image::make($request->questions[$key]['image'])->save(public_path('assets/images/quiz/') . $questionValue['image']);
+                    $request->questions[$key]['image']->move(public_path('assets/images/quiz/'), $questionValue['image']);
                 } else {
                     $questionValue['image'] = $oldImage;
                 }
