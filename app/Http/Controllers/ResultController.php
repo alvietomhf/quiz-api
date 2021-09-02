@@ -7,6 +7,7 @@ use App\Models\Result;
 use App\Models\ResultEssay;
 use App\Models\ResultQuiz;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,6 +17,14 @@ class ResultController extends Controller
     {
         $quiz = Quiz::where('slug', $slug)->first();
         if (!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
+        
+        $isResult = Result::where([
+                        'quiz_id' => $quiz->id,
+                        'user_id' => auth()->user()->id
+                    ])->first();
+        if(isset($isResult)) {
+            return $this->responseFailed('Gagal submit', 'User sudah mengerjakan quiz ini', 400);
+        }
 
         $inputRaw = $request->only('data');
         $validator = Validator::make($inputRaw, [
@@ -69,6 +78,11 @@ class ResultController extends Controller
     {
         $quiz = Quiz::where('slug', $slug)->first();
         if (!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
+
+        $isAvailable = Carbon::parse($quiz->deadline)->toDateTimeString() > Carbon::now()->toDateTimeString() ? true : false;
+        if(!$isAvailable) {
+            return $this->responseFailed('Gagal submit', 'Waktu pengerjaan telah lewat', 400);
+        }
 
         $input = $request->all();
         $validator = Validator::make($input, [
