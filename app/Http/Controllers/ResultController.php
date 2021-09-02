@@ -26,6 +26,11 @@ class ResultController extends Controller
             return $this->responseFailed('Gagal submit', 'User sudah mengerjakan quiz ini', 400);
         }
 
+        $isAvailable = Carbon::parse($quiz->deadline)->toDateTimeString() > Carbon::now()->toDateTimeString() ? true : false;
+        if(!$isAvailable) {
+            return $this->responseFailed('Gagal submit', 'Waktu pengerjaan telah lewat', 400);
+        }
+
         $inputRaw = $request->only('data');
         $validator = Validator::make($inputRaw, [
             'data' => 'required'
