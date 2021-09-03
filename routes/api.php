@@ -6,6 +6,7 @@ use App\Http\Controllers\QuizController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\UserController;
 use App\Models\Quiz;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::group(['prefix' => 'guru', 'middleware' => ['guru']], function () {
+        Route::post('result/{slug}/quiz', [ResultController::class, 'quizStore']);
         Route::post('quizzes', [QuizController::class, 'store']);
         Route::put('quizzes/{quizzes:slug}', [QuizController::class, 'update']);
         Route::delete('quizzes/{quizzes:slug}', [QuizController::class, 'destroy']);
@@ -49,6 +51,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::put('result/{id}', [ResultController::class, 'createScoreEssay']);
     });
 
+    Route::get('users', [UserController::class, 'index']);
     Route::get('students', [UserController::class, 'studentIndex']);
     Route::get('teachers', [UserController::class, 'teacherIndex']);
     Route::post('users', [UserController::class, 'store'])->middleware(['admin']);

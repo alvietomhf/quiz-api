@@ -15,6 +15,12 @@ class UserController extends Controller
         return $this->responseSuccess('Data list siswa', $data, 200);
     }
 
+    public function index()
+    {
+        $data = User::all();
+        return $this->responseSuccess('Seluruh user', $data, 200);
+    }
+
     public function teacherIndex()
     {
         $data = User::select('id', 'name', 'email', 'avatar')->where('role', 'guru')->get();
