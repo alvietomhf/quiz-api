@@ -44,6 +44,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('quizzes', [QuizController::class, 'store']);
         Route::put('quizzes/{quizzes:slug}', [QuizController::class, 'update']);
         Route::delete('quizzes/{quizzes:slug}', [QuizController::class, 'destroy']);
+        Route::delete('quizzes/questions/{id}/file', [QuizController::class, 'deleteQuestionFile']);
 
         Route::get('result/{slug}/notsubmitted', [ResultController::class, 'resultNotSubmitted']);
         Route::get('result/{slug}/quiz', [ResultController::class, 'quizResultSubmitted']);
@@ -52,6 +53,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::get('users', [UserController::class, 'index']);
+    Route::get('users/{id}', [UserController::class, 'show']);
     Route::get('students', [UserController::class, 'studentIndex']);
     Route::get('teachers', [UserController::class, 'teacherIndex']);
     Route::post('users', [UserController::class, 'store'])->middleware(['admin']);

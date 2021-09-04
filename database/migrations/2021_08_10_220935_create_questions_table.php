@@ -17,7 +17,7 @@ class CreateQuestionsTable extends Migration
             $table->id();
             $table->foreignId('quiz_id')->constrained('quizzes')->onDelete('cascade');
             $table->string('question');
-            $table->string('image')->nullable();
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

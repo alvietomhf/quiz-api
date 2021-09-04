@@ -127,7 +127,7 @@ class ResultController extends Controller
         $quiz = Quiz::where('slug', $slug)->first();
         if (!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
 
-        $data = User::select('id', 'name')
+        $data = User::select('id', 'name', 'email', 'avatar')
                         ->where('role', 'siswa')
                         ->whereDoesntHave('results', function($q) use($quiz) {
                             $q->where('quiz_id', $quiz->id);
@@ -141,7 +141,7 @@ class ResultController extends Controller
         $quiz = Quiz::where('slug', $slug)->first();
         if (!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
 
-        $data = User::select('id', 'name')
+        $data = User::select('id', 'name', 'email', 'avatar')
                         ->where('role', 'siswa')
                         ->whereHas('results', function($q) use($quiz) {
                             $q->where('quiz_id', $quiz->id);
@@ -165,7 +165,7 @@ class ResultController extends Controller
         $quiz = Quiz::where('slug', $slug)->first();
         if (!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
 
-        $data = User::select('id', 'name')
+        $data = User::select('id', 'name', 'email', 'avatar')
                         ->where('role', 'siswa')
                         ->whereHas('results', function($q) use($quiz) {
                             $q->where('quiz_id', $quiz->id);

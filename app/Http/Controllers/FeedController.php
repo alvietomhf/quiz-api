@@ -13,7 +13,7 @@ class FeedController extends Controller
     {
         $data = Feed::with(['user:id,name,email', 'replies.user' => function($q) {
             $q->select('id', 'name', 'email');
-        }])->get();
+        }])->orderBy('created_at', 'DESC')->get();
 
         return $this->responseSuccess('Data', ($data ?? null));
     }
