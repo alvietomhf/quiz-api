@@ -62,6 +62,7 @@ class QuizController extends Controller
             'questions' => 'required|array|between:1,10',
             'questions.*.question' => 'required|string',
             'questions.*.file' => 'nullable|mimes:jpeg,png,jpg,doc,docx,pdf',
+            'questions.*.options' => 'required|array|between:1,4',
             'questions.*.options.*.title' => 'required|string',
             'questions.*.options.*.correct' => 'required',
         ]);
@@ -183,8 +184,11 @@ class QuizController extends Controller
             'title' => 'required|string',
             'deadline' => 'required|date',
             'questions' => 'required|array|between:1,10',
+            'questions.*.id' => 'required|numeric',
             'questions.*.question' => 'required|string',
             'questions.*.file' => 'nullable|mimes:jpeg,png,jpg,doc,docx,pdf',
+            'questions.*.options' => 'required|array|between:1,4',
+            'questions.*.options.*.id' => 'required|numeric',
             'questions.*.options.*.title' => 'required|string',
             'questions.*.options.*.correct' => 'required',
         ]);
@@ -202,29 +206,64 @@ class QuizController extends Controller
             ]);
 
             foreach ($input['questions'] as $key => $questionValue) {
-                $oldFile = $quiz->questions[$key]->file;
-                if ($request->hasFile('questions.' . $key . '.file')) {
-                    File::delete('assets/files/quiz/' . $oldFile);
-                    $questionValue['file'] = rand() . '.' . $request->questions[$key]['file']->getClientOriginalExtension();
+                if ($questionValue['id'] == -1) {
+                    $questionValue['file'] = null;
+                    if ($request->hasFile('questions.' . $key . '.file')) {
+                        $questionValue['file'] = rand().'.'.$request->questions[$key]['file']->getClientOriginalExtension();
 
-                    $request->questions[$key]['file']->move(public_path('assets/files/quiz/'), $questionValue['file']);
-                } else {
-                    $questionValue['file'] = $oldFile;
-                }
+                        $request->questions[$key]['file']->move(public_path('assets/files/quiz/'), $questionValue['file']);
+                    }
 
-                Question::where('id', $quiz->questions[$key]->id)
-                    ->update([
+                    $question = Question::create([
+                        'quiz_id' => $quiz->id,
                         'question' => $questionValue['question'],
                         'file' => $questionValue['file']
                     ]);
 
-                if ($quiz->type == 'quiz') {
-                    foreach ($questionValue['options'] as $key2 => $optionValue) {
-                        Option::where('id', $quiz->questions[$key]->options[$key2]->id)
-                            ->update([
-                                'title' => $optionValue['title'],
-                                'correct' => +$optionValue['correct']
-                            ]);
+                    if ($quiz->type == 'quiz') {
+                        foreach ($questionValue['options'] as $optionValue) {
+                            if ($optionValue['id'] == -1) {
+                                Option::create([
+                                    'question_id' => $question->id,
+                                    'title' => $optionValue['title'],
+                                    'correct' => +$optionValue['correct']
+                                ]);
+                            }
+                        }
+                    }
+                } else {
+                    $oldFile = $quiz->questions[$key]->file;
+                    if ($request->hasFile('questions.' . $key . '.file')) {
+                        File::delete('assets/files/quiz/' . $oldFile);
+                        $questionValue['file'] = rand() . '.' . $request->questions[$key]['file']->getClientOriginalExtension();
+
+                        $request->questions[$key]['file']->move(public_path('assets/files/quiz/'), $questionValue['file']);
+                    } else {
+                        $questionValue['file'] = $oldFile;
+                    }
+
+                    Question::where('id', $questionValue['id'])
+                        ->update([
+                            'question' => $questionValue['question'],
+                            'file' => $questionValue['file']
+                        ]);
+
+                    if ($quiz->type == 'quiz') {
+                        foreach ($questionValue['options'] as $key2 => $optionValue) {
+                            if ($optionValue['id'] == -1) {
+                                Option::create([
+                                    'question_id' => $questionValue['id'],
+                                    'title' => $optionValue['title'],
+                                    'correct' => +$optionValue['correct']
+                                ]);
+                            } else {
+                                Option::where('id', $optionValue['id'])
+                                    ->update([
+                                        'title' => $optionValue['title'],
+                                        'correct' => +$optionValue['correct']
+                                    ]);
+                            }
+                        }
                     }
                 }
             }
@@ -282,5 +321,15 @@ class QuizController extends Controller
         $question->update(['file' => null]);
 
         return $this->responseSuccess('File berhasil dihapus');
+    }
+
+    public function deleteOption($id)
+    {
+        $option = Option::find($id);
+        if (!$option) return $this->responseFailed('Data tidak ditemukan', '', 404);
+
+        $option->delete();
+
+        return $this->responseSuccess('Pilihan berhasil dihapus');
     }
 }

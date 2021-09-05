@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::put('quizzes/{quizzes:slug}', [QuizController::class, 'update']);
         Route::delete('quizzes/{quizzes:slug}', [QuizController::class, 'destroy']);
         Route::delete('quizzes/questions/{id}/file', [QuizController::class, 'deleteQuestionFile']);
+        Route::delete('quizzes/options/{id}', [QuizController::class, 'deleteOption']);
 
         Route::get('result/{slug}/notsubmitted', [ResultController::class, 'resultNotSubmitted']);
         Route::get('result/{slug}/quiz', [ResultController::class, 'quizResultSubmitted']);
