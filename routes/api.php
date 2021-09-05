@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\MateriController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\UserController;
@@ -34,6 +35,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('feeds/{feedId}/reply', [FeedController::class, 'replyStore']);
     Route::get('feeds', [FeedController::class, 'feedIndex']);
 
+    Route::get('materi', [MateriController::class, 'index']);
+    Route::get('materi/{id}', [MateriController::class, 'show']);
+
     Route::group(['prefix' => 'siswa', 'middleware' => ['siswa']], function () {
         Route::post('result/{slug}/quiz', [ResultController::class, 'quizStore']);
         Route::post('result/{slug}/essay', [ResultController::class, 'essayStore']);
@@ -51,6 +55,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('result/{slug}/quiz', [ResultController::class, 'quizResultSubmitted']);
         Route::get('result/{slug}/essay', [ResultController::class, 'essayResultSubmitted']);
         Route::put('result/{id}', [ResultController::class, 'createScoreEssay']);
+
+        Route::post('materi', [MateriController::class, 'store']);
+        Route::put('materi/{id}', [MateriController::class, 'update']);
+        Route::delete('materi/{id}', [MateriController::class, 'destroy']);
+        Route::delete('materi/{id}/image', [MateriController::class, 'deleteMateriImage']);
     });
 
     Route::get('users', [UserController::class, 'index']);

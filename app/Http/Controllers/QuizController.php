@@ -33,7 +33,7 @@ class QuizController extends Controller
             }])->get();
         }
 
-        return $this->responseSuccess('Data', ($data ?? null));
+        return $this->responseSuccess('Data', $data);
     }
 
     /**
@@ -76,7 +76,7 @@ class QuizController extends Controller
 
             $quiz = Quiz::create([
                 'title' => $input['title'],
-                'slug' =>  Str::slug($input['title']),
+                'slug' =>  Str::slug($input['title']).'-'.uniqid(),
                 'type' => $input['type'],
                 'deadline' => $input['deadline']
             ]);
@@ -315,7 +315,7 @@ class QuizController extends Controller
     {
         $question = Question::find($id);
         if (!$question) return $this->responseFailed('Data tidak ditemukan', '', 404);
-        if (!$question->file) return $this->responseFailed('File tidak ditemukan', '', 400);
+        if (!$question->file) return $this->responseFailed('File tidak ada', '', 400);
 
         File::delete('assets/files/quiz/' . $question->file);
         $question->update(['file' => null]);
