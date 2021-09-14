@@ -17,7 +17,7 @@ class CreateResultEssaysTable extends Migration
             $table->id();
             $table->foreignId('result_id')->constrained('results')->onDelete('cascade');
             $table->foreignId('question_id')->constrained('questions')->onDelete('cascade');
-            $table->longText('comment');
+            $table->longText('comment')->nullable();
             $table->string('file');
             $table->timestamps();
         });
