@@ -9,6 +9,7 @@ use App\Models\ResultQuiz;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ResultController extends Controller
@@ -40,43 +41,53 @@ class ResultController extends Controller
             return $this->responseFailed('Validasi error', $validator->errors(), 400);
         }
 
-        $input = json_decode($inputRaw['data']);
+        try {
+            DB::beginTransaction();
 
-        $data = [
-            'user_id' => auth()->user()->id,
-            'quiz_id' => $input[0]->quiz_id
-        ];
-        $result = Result::create($data);
-        $score = 0;
+            $input = json_decode($inputRaw['data']);
 
-        foreach ($input as $item) {
-            foreach ($item->options as $option) {
-                if (!property_exists($option, 'selected')) {
-                    $optData = [
-                        'result_id' => $result->id,
-                        'question_id' => $option->question_id,
-                        'option_id' => null,
-                        'correct' => false,
-                    ];
-                    ResultQuiz::create($optData);
-                    break;
-                }
-                if (isset($option->selected) && $option->selected == 1) {
-                    $optData = [
-                        'result_id' => $result->id,
-                        'question_id' => $option->question_id,
-                        'option_id' => $option->id,
-                        'correct' => $option->correct == $option->selected ? true : false,
-                    ];
-                    $res = ResultQuiz::create($optData);
-                    if ($res->correct) $score += 10;
-                    break;
+            $data = [
+                'user_id' => auth()->user()->id,
+                'quiz_id' => $input[0]->quiz_id
+            ];
+            $result = Result::create($data);
+            $score = 0;
+
+            foreach ($input as $item) {
+                foreach ($item->options as $option) {
+                    if (!property_exists($option, 'selected')) {
+                        $optData = [
+                            'result_id' => $result->id,
+                            'question_id' => $option->question_id,
+                            'option_id' => null,
+                            'correct' => false,
+                        ];
+                        ResultQuiz::create($optData);
+                        break;
+                    }
+                    if (isset($option->selected) && $option->selected == 1) {
+                        $optData = [
+                            'result_id' => $result->id,
+                            'question_id' => $option->question_id,
+                            'option_id' => $option->id,
+                            'correct' => $option->correct == $option->selected ? true : false,
+                        ];
+                        $res = ResultQuiz::create($optData);
+                        if ($res->correct) $score += 10;
+                        break;
+                    }
                 }
             }
-        }
-        $result->update(['score' => $score]);
+            $result->update(['score' => $score]);
 
-        return $this->responseSuccess('Jawaban berhasil disimpan');
+            DB::commit();
+
+            return $this->responseSuccess('Jawaban berhasil disimpan');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->responseFailed('Jawaban gagal disimpan');
+        }
+        
     }
 
     public function essayStore($slug, Request $request)
@@ -92,7 +103,7 @@ class ResultController extends Controller
         $input = $request->all();
         $validator = Validator::make($input, [
             'question_id' => 'required',
-            'comment' => 'required|string',
+            'comment' => 'nullable|string',
             'file' => 'nullable|mimes:jpeg,png,jpg,doc,docx,pdf',
         ]);
 
@@ -100,26 +111,35 @@ class ResultController extends Controller
             return $this->responseFailed('Validasi error', $validator->errors(), 400);
         }
 
-        if ($request->hasFile('file')) {
-            $input['file'] = rand() . '.' . request()->file->getClientOriginalExtension();
+        try {
+            DB::beginTransaction();
 
-            request()->file->move(public_path('assets/files/quiz/'), $input['file']);
+            if ($request->hasFile('file')) {
+                $input['file'] = rand() . '.' . request()->file->getClientOriginalExtension();
+    
+                request()->file->move(public_path('assets/files/quiz/'), $input['file']);
+            }
+    
+            $data = [
+                'user_id' => auth()->user()->id,
+                'quiz_id' => $quiz->id
+            ];
+            $result = Result::create($data);
+    
+            ResultEssay::create([
+                'result_id' => $result->id,
+                'question_id' => $input['question_id'],
+                'comment' => $input['comment'],
+                'file' => $input['file']
+            ]);
+
+            DB::commit();
+    
+            return $this->responseSuccess('Jawaban berhasil disimpan');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->responseFailed('Jawaban gagal disimpan');
         }
-
-        $data = [
-            'user_id' => auth()->user()->id,
-            'quiz_id' => $quiz->id
-        ];
-        $result = Result::create($data);
-
-        ResultEssay::create([
-            'result_id' => $result->id,
-            'question_id' => $input['question_id'],
-            'comment' => $input['comment'],
-            'file' => $input['file']
-        ]);
-
-        return $this->responseSuccess('Jawaban berhasil disimpan');
     }
 
     public function resultNotSubmitted($slug)
