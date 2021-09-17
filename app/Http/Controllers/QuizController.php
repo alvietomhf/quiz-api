@@ -59,6 +59,7 @@ class QuizController extends Controller
             'type' => 'required|string',
             'title' => 'required|string',
             'deadline' => 'required|date',
+            'banner' => 'nullable|mimes:jpeg,png,jpg',
             'questions' => 'required|array|between:1,10',
             'questions.*.question' => 'required|string',
             'questions.*.file' => 'nullable|mimes:jpeg,png,jpg,doc,docx,pdf',
@@ -74,11 +75,19 @@ class QuizController extends Controller
         try {
             DB::beginTransaction();
 
+            $input['banner'] = null;
+            if ($request->hasFile('banner')) {
+                $input['banner'] = rand() . '.' . request()->banner->getClientOriginalExtension();
+    
+                request()->banner->move(public_path('assets/images/quiz/'), $input['banner']);
+            }
+            
             $quiz = Quiz::create([
                 'title' => $input['title'],
                 'slug' =>  Str::slug($input['title']).'-'.uniqid(),
                 'type' => $input['type'],
-                'deadline' => $input['deadline']
+                'deadline' => $input['deadline'],
+                'banner' => $input['banner']
             ]);
 
             foreach ($input['questions'] as $key => $questionValue) {
@@ -183,6 +192,7 @@ class QuizController extends Controller
         $validator = Validator::make($input, [
             'title' => 'required|string',
             'deadline' => 'required|date',
+            'banner' => 'nullable|mimes:jpeg,png,jpg',
             'questions' => 'required|array|between:1,10',
             'questions.*.id' => 'required|numeric',
             'questions.*.question' => 'required|string',
@@ -200,9 +210,20 @@ class QuizController extends Controller
         try {
             DB::beginTransaction();
 
+            $oldBanner = $quiz->banner;
+            if ($request->hasFile('banner')) {
+                File::delete('assets/images/quiz/' . $oldBanner);
+                $input['banner'] = rand() . '.' . request()->banner->getClientOriginalExtension();
+    
+                request()->banner->move(public_path('assets/images/quiz/'), $input['banner']);
+            } else {
+                $input['banner'] = $oldBanner;
+            }
+
             $quiz->update([
                 'title' => $input['title'],
-                'deadline' => $input['deadline']
+                'deadline' => $input['deadline'],
+                'banner' => $input['banner']
             ]);
 
             foreach ($input['questions'] as $key => $questionValue) {
@@ -299,6 +320,10 @@ class QuizController extends Controller
     {
         $quiz = Quiz::where('slug', $slug)->with('questions')->first();
         if (!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
+
+        if ($quiz->banner) {
+            File::delete('assets/images/quiz/' . $quiz->banner);
+        }
 
         foreach ($quiz->questions as $questionValue) {
             if ($questionValue->file) {
