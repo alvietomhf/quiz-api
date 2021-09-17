@@ -18,7 +18,7 @@ class AuthController extends Controller
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed',
-            'avatar' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         if ($validator->fails()) {
