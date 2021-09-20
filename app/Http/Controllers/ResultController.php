@@ -147,7 +147,7 @@ class ResultController extends Controller
         $quiz = Quiz::where('slug', $slug)->first();
         if (!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
 
-        $data = User::select('id', 'name', 'email', 'avatar')
+        $data = User::select('id', 'name', 'email', 'avatar', 'number')
                         ->where('role', 'siswa')
                         ->whereDoesntHave('results', function($q) use($quiz) {
                             $q->where('quiz_id', $quiz->id);
@@ -161,7 +161,7 @@ class ResultController extends Controller
         $quiz = Quiz::where('slug', $slug)->first();
         if (!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
 
-        $data = User::select('id', 'name', 'email', 'avatar')
+        $data = User::select('id', 'name', 'email', 'avatar', 'number')
                         ->where('role', 'siswa')
                         ->whereHas('results', function($q) use($quiz) {
                             $q->where('quiz_id', $quiz->id);
@@ -185,7 +185,7 @@ class ResultController extends Controller
         $quiz = Quiz::where('slug', $slug)->first();
         if (!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
 
-        $data = User::select('id', 'name', 'email', 'avatar')
+        $data = User::select('id', 'name', 'email', 'avatar', 'number')
                         ->where('role', 'siswa')
                         ->whereHas('results', function($q) use($quiz) {
                             $q->where('quiz_id', $quiz->id);
@@ -220,5 +220,25 @@ class ResultController extends Controller
         $result->update(['score' => $input['score']]);
 
         return $this->responseSuccess('Score berhasil dibuat');
+    }
+
+    public function studentResultSubmitted()
+    {
+        $data = Result::where('user_id', auth()->user()->id)
+                        ->with([
+                        'quiz:id,title,slug,type,banner',
+                        'result_quizzes' => function($q) {
+                            $q->select('id', 'result_id', 'question_id', 'option_id', 'correct');
+                        },
+                        'result_quizzes.question:id,question',
+                        'result_quizzes.option:id,title',
+                        'result_essays' => function($q) {
+                            $q->select('id', 'result_id', 'question_id', 'comment', 'file');
+                        },
+                        'result_essays.question:id,question',
+                        ])
+                        ->get();
+        
+        return $this->responseSuccess('Data', $data);
     }
 }
