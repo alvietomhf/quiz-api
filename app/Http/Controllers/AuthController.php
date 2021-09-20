@@ -18,7 +18,8 @@ class AuthController extends Controller
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'number' => 'required|integer|unique:users,number',
         ]);
 
         if ($validator->fails()) {
@@ -36,7 +37,8 @@ class AuthController extends Controller
             'email' => $input['email'],
             'password' => bcrypt($input['password']),
             'role' => 'siswa',
-            'avatar' => $input['avatar']
+            'avatar' => $input['avatar'],
+            'number' => +$input['number'],
         ]);
 
         $token = $user->createToken('quizapptoken')->plainTextToken;
