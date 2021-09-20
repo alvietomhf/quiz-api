@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -10,7 +11,7 @@ class UserController extends Controller
 {
     public function studentIndex()
     {
-        $data = User::select('id', 'name', 'email', 'avatar')->where('role', 'siswa')->orderBy('name', 'ASC')->get();
+        $data = User::select('id', 'name', 'email', 'avatar', 'number')->where('role', 'siswa')->orderBy('name', 'ASC')->get();
 
         return $this->responseSuccess('Data list siswa', $data, 200);
     }
@@ -80,5 +81,23 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function status()
+    {
+        $rawUsers = User::select('id', 'name', 'email', 'role', 'avatar', 'number', 'last_seen')
+                        ->whereNotNull('last_seen')
+                        ->orderBy('last_seen', 'DESC')
+                        ->take(10)
+                        ->get();
+
+        $data = $rawUsers->map(function($user) {
+            $user['online'] = false;
+            if ($user->last_seen > Carbon::now()->subMinutes(2)) $user['online'] = true;
+
+            return $user;
+        });
+
+        return $this->responseSuccess('Berhasil mendapatkan data', $data, 200);
     }
 }
