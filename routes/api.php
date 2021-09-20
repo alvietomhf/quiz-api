@@ -39,6 +39,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('materi/{id}', [MateriController::class, 'show']);
 
     Route::group(['prefix' => 'siswa', 'middleware' => ['siswa']], function () {
+        Route::get('result', [ResultController::class, 'studentResultSubmitted']);
         Route::post('result/{slug}/quiz', [ResultController::class, 'quizStore']);
         Route::post('result/{slug}/essay', [ResultController::class, 'essayStore']);
     });
@@ -63,6 +64,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::get('users', [UserController::class, 'index']);
+    Route::get('users/status', [UserController::class, 'status']);
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::get('students', [UserController::class, 'studentIndex']);
     Route::get('teachers', [UserController::class, 'teacherIndex']);
