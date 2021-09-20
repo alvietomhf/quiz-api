@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Option;
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\Result;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -148,6 +149,14 @@ class QuizController extends Controller
         if (!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
 
         if ($quiz->type == 'quiz') {
+            $isResult = Result::where([
+                            'quiz_id' => $quiz->id,
+                            'user_id' => auth()->user()->id
+                        ])->first();
+            if(isset($isResult)) {
+                return $this->responseFailed('Gagal', 'User sudah mengerjakan quiz ini', 400);
+            }
+
             $data = Quiz::where('slug', $quiz->slug)->with(['questions' => function ($q) {
                 $q->select('id', 'quiz_id', 'question', 'file');
             }, 'questions.options' => function ($q) {
