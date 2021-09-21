@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         DB::table('users')->insert([
-            'name' => 'test',
-            'email' => 'test@gmail.com',
+            'name' => 'siswa',
+            'email' => 'siswa@gmail.com',
             'role' => 'siswa',
             'email_verified_at' => Carbon::now(),
             'remember_token' => Str::Random(50),
@@ -28,8 +28,8 @@ class DatabaseSeeder extends Seeder
             'updated_at' => Carbon::now()
         ]);
         DB::table('users')->insert([
-            'name' => 'kira',
-            'email' => 'kira@gmail.com',
+            'name' => 'guru',
+            'email' => 'guru@gmail.com',
             'role' => 'guru',
             'email_verified_at' => Carbon::now(),
             'remember_token' => Str::Random(50),
