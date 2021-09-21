@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +70,8 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token
         ];
+
+        $user->update(['last_seen' => Carbon::now()]);
 
         return $this->responseSuccess('Login berhasil', $data, 200);
     }
