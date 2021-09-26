@@ -16,7 +16,11 @@ class CreateMaterisTable extends Migration
         Schema::create('materis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('title');
+            $table->string('subject');
+            $table->longText('competence');
+            $table->string('class');
+            $table->string('semester');
+            $table->string('meet');
             $table->longText('description');
             $table->string('image_banner')->nullable();
             $table->timestamps();

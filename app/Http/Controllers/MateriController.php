@@ -21,14 +21,18 @@ class MateriController extends Controller
         $data = Materi::where('id', $id)->with(['user:id,name,email,avatar'])->first();
         if (!$data) return $this->responseFailed('Data tidak ditemukan', '', 404);
 
-        return $this->responseSuccess('detail data', $data, 200);
+        return $this->responseSuccess('Detail data', $data, 200);
     }
 
     public function store(Request $request)
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-            'title' => 'required|string',
+            'subject' => 'required|string',
+            'competence' => 'required|string',
+            'class' => 'required|string',
+            'semester' => 'required|string',
+            'meet' => 'required|string',
             'description' => 'required|string',
             'image_banner' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
@@ -45,7 +49,11 @@ class MateriController extends Controller
 
         $data = Materi::create([
             'user_id' => auth()->user()->id,
-            'title' => $input['title'],
+            'subject' => $input['subject'],
+            'competence' => $input['competence'],
+            'class' => $input['class'],
+            'semester' => $input['semester'],
+            'meet' => $input['meet'],
             'description' => $input['description'],
             'image_banner' => $input['image_banner'] ?? null
         ]);
@@ -60,7 +68,11 @@ class MateriController extends Controller
 
         $input = $request->all();
         $validator = Validator::make($input, [
-            'title' => 'required|string',
+            'subject' => 'required|string',
+            'competence' => 'required|string',
+            'class' => 'required|string',
+            'semester' => 'required|string',
+            'meet' => 'required|string',
             'description' => 'required|string',
             'image_banner' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
