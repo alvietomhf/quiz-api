@@ -9,18 +9,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
-    public function studentRegister(Request $request)
+    public function register(Request $request)
     {
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed',
+            'role' => Rule::in(['siswa', 'guru']),
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'number' => 'required|integer|unique:users,number',
+            'number' => 'sometimes|nullable|integer|unique:users,number',
         ]);
 
         if ($validator->fails()) {
@@ -37,9 +39,9 @@ class AuthController extends Controller
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => bcrypt($input['password']),
-            'role' => 'siswa',
+            'role' => $input['role'],
             'avatar' => $input['avatar'],
-            'number' => +$input['number'],
+            'number' => isset($input['number']) ? +$input['number'] : null,
         ]);
 
         $token = $user->createToken('quizapptoken')->plainTextToken;

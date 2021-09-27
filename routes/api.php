@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::post('login', [AuthController::class, 'login']);
-Route::post('register/student', [AuthController::class, 'studentRegister']);
+Route::post('register', [AuthController::class, 'register']);
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -68,7 +68,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::get('students', [UserController::class, 'studentIndex']);
     Route::get('teachers', [UserController::class, 'teacherIndex']);
-    Route::post('users', [UserController::class, 'store'])->middleware(['admin']);
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
