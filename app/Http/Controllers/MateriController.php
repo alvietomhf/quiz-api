@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
 use App\Models\Materi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -122,5 +123,27 @@ class MateriController extends Controller
         $materi->update(['image_banner' => null]);
 
         return $this->responseSuccess('Gambar berhasil dihapus');
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'files' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->responseFailed('Validasi error', $validator->errors(), 400);
+        }
+
+        if ($request->hasFile('file')) {
+            $input['file'] = rand().'.'.request()->file->getClientOriginalExtension();
+            
+            request()->file->move(public_path('assets/images/ck/'), $input['file']);
+        }
+
+        $data = Image::create(['file' => $input['file'] ?? null]);
+
+        return $this->responseSuccess('Data berhasil dibuat', $data, 201);
     }
 }

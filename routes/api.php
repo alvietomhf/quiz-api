@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('materi', [MateriController::class, 'index']);
     Route::get('materi/{id}', [MateriController::class, 'show']);
+    Route::post('upload/image', [MateriController::class, 'uploadImage']);
 
     Route::group(['prefix' => 'siswa', 'middleware' => ['siswa']], function () {
         Route::get('result', [ResultController::class, 'studentResultSubmitted']);
