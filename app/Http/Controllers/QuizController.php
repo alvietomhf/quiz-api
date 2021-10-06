@@ -64,7 +64,7 @@ class QuizController extends Controller
             'questions' => 'required|array|between:1,10',
             'questions.*.question' => 'required|string',
             'questions.*.file' => 'nullable|mimes:jpeg,png,jpg,doc,docx,pdf',
-            'questions.*.options' => 'sometimes|array|between:1,4',
+            'questions.*.options' => 'sometimes|array|between:1,5',
             'questions.*.options.*.title' => 'required|string',
             'questions.*.options.*.correct' => 'required',
         ]);
@@ -206,7 +206,7 @@ class QuizController extends Controller
             'questions.*.id' => 'required|numeric',
             'questions.*.question' => 'required|string',
             'questions.*.file' => 'nullable',
-            'questions.*.options' => 'sometimes|array|between:1,4',
+            'questions.*.options' => 'sometimes|array|between:1,5',
             'questions.*.options.*.id' => 'required|numeric',
             'questions.*.options.*.title' => 'required|string',
             'questions.*.options.*.correct' => 'required',
