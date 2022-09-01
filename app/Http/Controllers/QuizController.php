@@ -15,10 +15,110 @@ use Illuminate\Support\Facades\Validator;
 
 class QuizController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/quizzes",
+     *      operationId="getQuizList",
+     *      tags={"Quizzes"},
+     *      summary="Get List of Quizzes",
+     *      description="Get List of Quizzes",
+     *      security={{"sanctum":{}}},
+     *      @OA\Parameter(
+     *          name="type",
+     *          description="Type of quizzes",
+     *          in="query",
+     *          required=true,
+     *          @OA\Schema(
+     *              type="string", default="quiz", enum={"quiz", "essay"}
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string", example="Data"),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  example={{
+     *                      "id": 1,
+     *                      "title": "First Quiz",
+     *                      "slug": "first-quiz-615dbbd9b550c",
+     *                      "type": "quiz",
+     *                      "deadline": "2021-10-11 22:08:09",
+     *                      "banner": "1585923272.png",
+     *                      "created_at": "2021-10-06T15:08:09.000000Z",
+     *                      "updated_at": "2021-10-06T15:08:09.000000Z",
+     *                      "questions": {
+     *                          {
+     *                              "id": 1,
+     *                              "quiz_id": 1,
+     *                              "question": "Question One",
+     *                              "file": "173709104.jpg",
+     *                              "options": {
+     *                                  {
+     *                                      "id": 1,
+     *                                      "question_id": 1,
+     *                                      "title": "Option A",
+     *                                  },
+     *                                  {
+     *                                      "id": 2,
+     *                                      "question_id": 1,
+     *                                      "title": "Option B",
+     *                                  },
+     *                                  {
+     *                                      "id": 3,
+     *                                      "question_id": 1,
+     *                                      "title": "Option C",
+     *                                  },
+     *                              }
+     *                          }
+     *                      }
+     *                  }},
+     *                  @OA\Items(
+     *                      @OA\Property(property="id", type="integer"),
+     *                      @OA\Property(property="title", type="string"),
+     *                      @OA\Property(property="slug", type="string"),
+     *                      @OA\Property(property="type", type="string"),
+     *                      @OA\Property(property="deadline", type="string", format="date-time"),
+     *                      @OA\Property(property="banner", type="string"),
+     *                      @OA\Property(property="created_at", type="string", format="date-time"),
+     *                      @OA\Property(property="updated_at", type="string", format="date-time"),
+     *                      @OA\Property(
+     *                          property="questions",
+     *                          type="array",
+     *                          @OA\Items(
+     *                              @OA\Property(property="id", type="integer"),
+     *                              @OA\Property(property="quiz_id", type="integer"),
+     *                              @OA\Property(property="question", type="string"),
+     *                              @OA\Property(property="file", type="string"),
+     *                              @OA\Property(
+     *                                  property="options",
+     *                                  type="array",
+     *                                  @OA\Items(
+     *                                      @OA\Property(property="id", type="integer"),
+     *                                      @OA\Property(property="question_id", type="integer"),
+     *                                      @OA\Property(property="title", type="string"),
+     *                                  ),
+     *                              ),
+     *                          ),
+     *                      ),
+     *                  ),
+     *              ),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthorized",
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error",
+     *      ),
+     * )
      */
     public function index()
     {
@@ -26,7 +126,7 @@ class QuizController extends Controller
             $data = Quiz::where('type', 'quiz')->with(['questions' => function ($q) {
                 $q->select('id', 'quiz_id', 'question', 'file');
             }, 'questions.options' => function ($q) {
-                $q->select('id', 'question_id', 'title', 'correct');
+                $q->select('id', 'question_id', 'title');
             }])->get();
         } else {
             $data = Quiz::where('type', 'essay')->with(['questions' => function ($q) {
@@ -48,10 +148,158 @@ class QuizController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     *      path="/api/guru/quizzes",
+     *      operationId="storeQuiz",
+     *      tags={"Quizzes"},
+     *      summary="Store Quiz in DB",
+     *      description="Store Quiz in DB",
+     *      security={{"sanctum":{}}},
+     *      @OA\RequestBody(
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(
+     *                  type="object",
+     *                  required={"title", "type", "deadline", "questions"},
+     *                  nullable={"banner"},
+     *                  @OA\Property(property="title", type="string", example="First Quiz"),
+     *                  @OA\Property(property="type", type="string", enum={"quiz", "essay"}, example="quiz",
+     *                      description="If type `quiz` options field inside questions are required. Else, don't attach options property in request.",
+     *                  ),
+     *                  @OA\Property(property="deadline", type="string", format="date-time", example="2022-10-11 22:08:09"),
+     *                  @OA\Property(property="banner", type="file", description="Image or `null`.", example=null),
+     *                  @OA\Property(
+     *                      property="questions",
+     *                      type="array",
+     *                      required={"question"},
+     *                      nullable={"file", "options"},
+     *                      example={
+     *                          {
+     *                              "question": "Question One",
+     *                              "file": null,
+     *                              "options": {
+     *                                 {
+     *                                   "title": "Option A",
+     *                                   "correct": 1
+     *                                 },
+     *                                 {
+     *                                   "title": "Option B",
+     *                                   "correct": 0
+     *                                 },
+     *                                 {
+     *                                   "title": "Option C",
+     *                                   "correct": 0
+     *                                 },
+     *                              }
+     *                          },
+     *                          {
+     *                              "question": "Question Two",
+     *                              "file": null,
+     *                              "options": {
+     *                                 {
+     *                                   "title": "Option A",
+     *                                   "correct": 1
+     *                                 },
+     *                                 {
+     *                                   "title": "Option B",
+     *                                   "correct": 0
+     *                                 },
+     *                                 {
+     *                                   "title": "Option C",
+     *                                   "correct": 0
+     *                                 },
+     *                              }
+     *                          }
+     *                      },
+     *                      @OA\Items(
+     *                          type="object",
+     *                          @OA\Property(property="question", type="string", example="Question One"),
+     *                          @OA\Property(property="file", type="file", description="File or `null`.", example=null),
+     *                          @OA\Property(
+     *                              property="options",
+     *                              description="Required if type `quiz`.",
+     *                              type="array",
+     *                              required={"title", "correct"},
+     *                              @OA\Items(
+     *                                  type="object",
+     *                                  @OA\Property(property="title", type="string", example="Option A"),
+     *                                  @OA\Property(property="correct", type="integer", enum={1,0}, example=1),
+     *                              ),
+     *                          ),
+     *                      ),
+     *                  ),
+     *              ),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string", example="Data berhasil dibuat"),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object",
+     *                  example={
+     *                      "id": 1,
+     *                      "title": "First Quiz",
+     *                      "slug": "first-quiz-615dbbd9b550c",
+     *                      "type": "quiz",
+     *                      "deadline": "2021-10-11 22:08:09",
+     *                      "banner": "1585923272.png",
+     *                      "created_at": "2021-10-06T15:08:09.000000Z",
+     *                      "updated_at": "2021-10-06T15:08:09.000000Z",
+     *                      "questions": {
+     *                          {
+     *                              "id": 1,
+     *                              "quiz_id": 1,
+     *                              "question": "Question One",
+     *                              "file": "173709104.jpg",
+     *                              "options": {
+     *                                  {
+     *                                      "id": 1,
+     *                                      "question_id": 1,
+     *                                      "title": "Option A",
+     *                                      "correct": 0
+     *                                  },
+     *                                  {
+     *                                      "id": 2,
+     *                                      "question_id": 1,
+     *                                      "title": "Option B",
+     *                                      "correct": 0
+     *                                  },
+     *                                  {
+     *                                      "id": 3,
+     *                                      "question_id": 1,
+     *                                      "title": "Option C",
+     *                                      "correct": 1
+     *                                  },
+     *                              }
+     *                          }
+     *                      }
+     *                  }
+     *              ),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=false),
+     *              @OA\Property(property="message", type="string", example="Validasi error"),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthorized",
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error",
+     *      ),
+     *  )
      */
     public function store(Request $request)
     {
@@ -80,7 +328,7 @@ class QuizController extends Controller
             if ($request->hasFile('banner')) {
                 $input['banner'] = rand() . '.' . request()->banner->getClientOriginalExtension();
     
-                request()->banner->move(public_path('assets/images/quiz/'), $input['banner']);
+                request()->banner->move(public_path('storage/images/quiz/'), $input['banner']);
             }
             
             $quiz = Quiz::create([
@@ -96,7 +344,7 @@ class QuizController extends Controller
                 if ($request->hasFile('questions.' . $key . '.file')) {
                     $questionValue['file'] = rand().'.'.$request->questions[$key]['file']->getClientOriginalExtension();
 
-                    $request->questions[$key]['file']->move(public_path('assets/files/quiz/'), $questionValue['file']);
+                    $request->questions[$key]['file']->move(public_path('storage/files/quiz/'), $questionValue['file']);
                 }
 
                 $question = Question::create([
@@ -138,10 +386,94 @@ class QuizController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/quizzes/{slug}",
+     *      operationId="showQuizzes",
+     *      tags={"Quizzes"},
+     *      summary="Get Quizzes Detail",
+     *      description="Get Quizzes Detail",
+     *      security={{"sanctum":{}}},
+     *      @OA\Parameter(
+     *          name="slug",
+     *          in="path",
+     *          description="Slug of Quizzes",
+     *          required=true,
+     *          example="first-quiz-630ee5b27b98e",
+     *          @OA\Schema(type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string", example="Detail data"),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object",
+     *                  example={
+     *                      "id": 1,
+     *                      "title": "First Quiz",
+     *                      "slug": "first-quiz-615dbbd9b550c",
+     *                      "type": "quiz",
+     *                      "deadline": "2021-10-11 22:08:09",
+     *                      "banner": "1585923272.png",
+     *                      "created_at": "2021-10-06T15:08:09.000000Z",
+     *                      "updated_at": "2021-10-06T15:08:09.000000Z",
+     *                      "questions": {
+     *                          {
+     *                              "id": 1,
+     *                              "quiz_id": 1,
+     *                              "question": "Question One",
+     *                              "file": "173709104.jpg",
+     *                              "options": {
+     *                                  {
+     *                                      "id": 1,
+     *                                      "question_id": 1,
+     *                                      "title": "Option A",
+     *                                      "correct": 1
+     *                                  },
+     *                                  {
+     *                                      "id": 2,
+     *                                      "question_id": 1,
+     *                                      "title": "Option B",
+     *                                      "correct": 0
+     *                                  },
+     *                                  {
+     *                                      "id": 3,
+     *                                      "question_id": 1,
+     *                                      "title": "Option C",
+     *                                      "correct": 0
+     *                                  },
+     *                              }
+     *                          }
+     *                      }
+     *                  }
+     *              ),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Already submitted this quizzes",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=false),
+     *              @OA\Property(property="message", type="string", example="Gagal"),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthorized",
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Data not found",
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error",
+     *      ),
+     * )
      */
     public function show($slug)
     {
@@ -160,7 +492,11 @@ class QuizController extends Controller
             $data = Quiz::where('slug', $quiz->slug)->with(['questions' => function ($q) {
                 $q->select('id', 'quiz_id', 'question', 'file');
             }, 'questions.options' => function ($q) {
-                $q->select('id', 'question_id', 'title', 'correct');
+                if (auth()->user()->role == 'siswa') {
+                    $q->select('id', 'question_id', 'title');
+                } else {
+                    $q->select('id', 'question_id', 'title', 'correct');
+                }
             }])->first();
         } else {
             $data = Quiz::where('slug', $quiz->slug)->with(['questions' => function ($q) {
@@ -183,11 +519,188 @@ class QuizController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     *      path="/api/guru/quizzes/{slug}",
+     *      operationId="updateQuiz",
+     *      tags={"Quizzes"},
+     *      summary="Update Quiz in DB",
+     *      description="Update Quiz in DB",
+     *      security={{"sanctum":{}}},
+     *      @OA\Parameter(
+     *          name="slug",
+     *          in="path",
+     *          description="Slug of Materi",
+     *          required=true,
+     *          example="first-quiz-630ee5b27b98e",
+     *          @OA\Schema(type="string")
+     *      ),
+     *      @OA\Parameter(
+     *          name="_method",
+     *          description="Spoofing put method",
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string", default="PUT"
+     *          )
+     *      ),
+     *      @OA\RequestBody(
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(
+     *                  type="object",
+     *                  required={"title", "type", "deadline", "questions"},
+     *                  nullable={"banner"},
+     *                  @OA\Property(property="title", type="string", example="First Quiz Update"),
+     *                  @OA\Property(property="type", type="string", enum={"quiz", "essay"}, example="quiz",
+     *                      description="If type `quiz` options field inside questions are required. Else, don't attach options property in request.",
+     *                  ),
+     *                  @OA\Property(property="deadline", type="string", format="date-time", example="2022-10-11 22:08:09"),
+     *                  @OA\Property(property="banner", type="file", description="Image or `null`.", example=null),
+     *                  @OA\Property(
+     *                      property="questions",
+     *                      type="array",
+     *                      required={"id", "question"},
+     *                      nullable={"file", "options"},
+     *                      example={
+     *                          {
+     *                              "id": 1,
+     *                              "question": "Question One Update",
+     *                              "file": null,
+     *                              "options": {
+     *                                 {
+     *                                   "id": 1,
+     *                                   "title": "Option A Update",
+     *                                   "correct": 1
+     *                                 },
+     *                                 {
+     *                                   "id": 2,
+     *                                   "title": "Option B Update",
+     *                                   "correct": 0
+     *                                 },
+     *                                 {
+     *                                   "id": 3,
+     *                                   "title": "Option C Update",
+     *                                   "correct": 0
+     *                                 },
+     *                              }
+     *                          },
+     *                          {
+     *                              "id": 2,
+     *                              "question": "Question Two Update",
+     *                              "file": null,
+     *                              "options": {
+     *                                 {
+     *                                   "id": 4,
+     *                                   "title": "Option A Update",
+     *                                   "correct": 1
+     *                                 },
+     *                                 {
+     *                                   "id": 5,
+     *                                   "title": "Option B Update",
+     *                                   "correct": 0
+     *                                 },
+     *                                 {
+     *                                   "id": 6,
+     *                                   "title": "Option C Update",
+     *                                   "correct": 0
+     *                                 },
+     *                              }
+     *                          }
+     *                      },
+     *                      @OA\Items(
+     *                          type="object",
+     *                          @OA\Property(property="id", type="integer", example="1", description="Set to `-1` to add new data"),
+     *                          @OA\Property(property="question", type="string", example="Question One"),
+     *                          @OA\Property(property="file", type="file", description="File or `null`.", example=null),
+     *                          @OA\Property(
+     *                              property="options",
+     *                              description="Required if type `quiz`.",
+     *                              type="array",
+     *                              required={"id", "title", "correct"},
+     *                              @OA\Items(
+     *                                  type="object",
+     *                                  @OA\Property(property="id", type="integer", example="1", description="Set to `-1` to add new data"),
+     *                                  @OA\Property(property="title", type="string", example="Option A"),
+     *                                  @OA\Property(property="correct", type="integer", enum={1,0}, example=1),
+     *                              ),
+     *                          ),
+     *                      ),
+     *                  ),
+     *              ),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string", example="Data berhasil diubah"),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object",
+     *                  example={
+     *                      "id": 1,
+     *                      "title": "First Quiz Update",
+     *                      "slug": "first-quiz-615dbbd9b550c",
+     *                      "type": "quiz",
+     *                      "deadline": "2021-10-11 22:08:09",
+     *                      "banner": "1585923272.png",
+     *                      "created_at": "2021-10-06T15:08:09.000000Z",
+     *                      "updated_at": "2021-10-06T15:08:09.000000Z",
+     *                      "questions": {
+     *                          {
+     *                              "id": 1,
+     *                              "quiz_id": 1,
+     *                              "question": "Question One Update",
+     *                              "file": "173709104.jpg",
+     *                              "options": {
+     *                                  {
+     *                                      "id": 1,
+     *                                      "question_id": 1,
+     *                                      "title": "Option A Update",
+     *                                      "correct": 0
+     *                                  },
+     *                                  {
+     *                                      "id": 2,
+     *                                      "question_id": 1,
+     *                                      "title": "Option B Update",
+     *                                      "correct": 0
+     *                                  },
+     *                                  {
+     *                                      "id": 3,
+     *                                      "question_id": 1,
+     *                                      "title": "Option C Update",
+     *                                      "correct": 1
+     *                                  },
+     *                              }
+     *                          }
+     *                      }
+     *                  }
+     *              ),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=false),
+     *              @OA\Property(property="message", type="string", example="Validasi error"),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthorized",
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Data not found",
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error",
+     *      ),
+     *  )
      */
     public function update(Request $request, $slug)
     {
@@ -221,10 +734,10 @@ class QuizController extends Controller
 
             $oldBanner = $quiz->banner;
             if ($request->hasFile('banner')) {
-                File::delete('assets/images/quiz/' . $oldBanner);
+                File::delete('storage/images/quiz/' . $oldBanner);
                 $input['banner'] = rand() . '.' . request()->banner->getClientOriginalExtension();
     
-                request()->banner->move(public_path('assets/images/quiz/'), $input['banner']);
+                request()->banner->move(public_path('storage/images/quiz/'), $input['banner']);
             } else {
                 $input['banner'] = $oldBanner;
             }
@@ -241,7 +754,7 @@ class QuizController extends Controller
                     if ($request->hasFile('questions.' . $key . '.file')) {
                         $questionValue['file'] = rand().'.'.$request->questions[$key]['file']->getClientOriginalExtension();
 
-                        $request->questions[$key]['file']->move(public_path('assets/files/quiz/'), $questionValue['file']);
+                        $request->questions[$key]['file']->move(public_path('storage/files/quiz/'), $questionValue['file']);
                     }
 
                     $question = Question::create([
@@ -264,10 +777,10 @@ class QuizController extends Controller
                 } else {
                     $oldFile = $quiz->questions[$key]->file;
                     if ($request->hasFile('questions.' . $key . '.file')) {
-                        File::delete('assets/files/quiz/' . $oldFile);
+                        File::delete('storage/files/quiz/' . $oldFile);
                         $questionValue['file'] = rand() . '.' . $request->questions[$key]['file']->getClientOriginalExtension();
 
-                        $request->questions[$key]['file']->move(public_path('assets/files/quiz/'), $questionValue['file']);
+                        $request->questions[$key]['file']->move(public_path('storage/files/quiz/'), $questionValue['file']);
                     } else {
                         $questionValue['file'] = $oldFile;
                     }
@@ -320,10 +833,43 @@ class QuizController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Delete(
+     *      path="/api/guru/quizzes/{slug}",
+     *      operationId="destroyQuizzes",
+     *      tags={"Quizzes"},
+     *      summary="Delete Quizzes",
+     *      description="Delete Quizzes",
+     *      security={{"sanctum":{}}},
+     *      @OA\Parameter(
+     *          name="slug",
+     *          in="path",
+     *          description="Slug of Materi",
+     *          required=true,
+     *          example="first-quiz-630ee5b27b98e",
+     *          @OA\Schema(type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string", example="Data berhasil dihapus"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthorized",
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Data not found",
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error",
+     *      ),
+     *  )
      */
     public function destroy($slug)
     {
@@ -331,12 +877,12 @@ class QuizController extends Controller
         if (!$quiz) return $this->responseFailed('Data tidak ditemukan', '', 404);
 
         if ($quiz->banner) {
-            File::delete('assets/images/quiz/' . $quiz->banner);
+            File::delete('storage/images/quiz/' . $quiz->banner);
         }
 
         foreach ($quiz->questions as $questionValue) {
             if ($questionValue->file) {
-                File::delete('assets/files/quiz/' . $questionValue->file);
+                File::delete('storage/files/quiz/' . $questionValue->file);
             }
         }
 
@@ -345,18 +891,100 @@ class QuizController extends Controller
         return $this->responseSuccess('Data berhasil dihapus');
     }
 
+    /**
+     * @OA\Delete(
+     *      path="/api/guru/quizzes/questions/{id}/file",
+     *      operationId="deleteFileQuestion",
+     *      tags={"Quizzes"},
+     *      summary="Delete Question File",
+     *      description="Delete Question File",
+     *      security={{"sanctum":{}}},
+     *      @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          description="Id of Question",
+     *          required=true,
+     *          example=1,
+     *          @OA\Schema(type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string", example="File berhasil dihapus"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Image not found",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthorized",
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Data not found",
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error",
+     *      ),
+     *  )
+     */
     public function deleteQuestionFile($id)
     {
         $question = Question::find($id);
         if (!$question) return $this->responseFailed('Data tidak ditemukan', '', 404);
         if (!$question->file) return $this->responseFailed('File tidak ada', '', 400);
 
-        File::delete('assets/files/quiz/' . $question->file);
+        File::delete('storage/files/quiz/' . $question->file);
         $question->update(['file' => null]);
 
         return $this->responseSuccess('File berhasil dihapus');
     }
 
+    /**
+     * @OA\Delete(
+     *      path="/api/guru/quizzes/options/{id}",
+     *      operationId="destroyOptions",
+     *      tags={"Quizzes"},
+     *      summary="Delete Options",
+     *      description="Delete Options",
+     *      security={{"sanctum":{}}},
+     *      @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          description="Id of Options",
+     *          required=true,
+     *          example=1,
+     *          @OA\Schema(type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string", example="Pilihan berhasil dihapus"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthorized",
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Data not found",
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error",
+     *      ),
+     *  )
+     */
     public function deleteOption($id)
     {
         $option = Option::find($id);

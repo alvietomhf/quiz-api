@@ -46,7 +46,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::group(['prefix' => 'guru', 'middleware' => ['guru']], function () {
-        Route::post('result/{slug}/quiz', [ResultController::class, 'quizStore']);
         Route::post('quizzes', [QuizController::class, 'store']);
         Route::put('quizzes/{quizzes:slug}', [QuizController::class, 'update']);
         Route::delete('quizzes/{quizzes:slug}', [QuizController::class, 'destroy']);

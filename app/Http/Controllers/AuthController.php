@@ -13,6 +13,72 @@ use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
+    /**
+     * @OA\Post(
+     *      path="/api/register",
+     *      operationId="authRegister",
+     *      tags={"Auth"},
+     *      summary="User Register",
+     *      description="Register User Here",
+     *      @OA\RequestBody(
+     *          @OA\MediaType(
+     *              mediaType="multipart/form-data",
+     *              @OA\Schema(
+     *                  type="object",
+     *                  required={"name", "email", "password", "password_confirmation", "role"},
+     *                  nullable={"avatar", "number"},
+     *                  @OA\Property(property="name", type="string", example="John Doe"),
+     *                  @OA\Property(property="email", type="email", example="johndoe@gmail.com"),
+     *                  @OA\Property(property="password", type="password", example="Password`"),
+     *                  @OA\Property(property="password_confirmation", type="password", example="Password`"),
+     *                  @OA\Property(property="role", type="string", enum={"siswa", "guru"}, example="siswa"),
+     *                  @OA\Property(property="avatar", type="file"),
+     *                  @OA\Property(property="number", type="integer"),
+     *              ),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Register success",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string", example="Registrasi berhasil"),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object",
+     *                  example={
+     *                      "user": {
+     *                          "name": "John Doe",
+     *                          "email": "johndoe@gmail.com",
+     *                          "email_verified_at": "2022-08-29T06:19:06.000000Z",
+     *                          "role": "siswa",
+     *                          "avatar": "1255762734.jpg",
+     *                          "number": 2,
+     *                          "created_at": "2022-08-29T06:19:06.000000Z",
+     *                          "updated_at": "2022-08-29T08:34:52.000000Z",
+     *                          "id": 8,
+     *                      }
+     *                  }
+     *              ),
+     *              @OA\Property(property="token", type="string", example="2|pqLrmURrF0SmemD1TROWlWB1VIaUg1PE9r0uSf69"),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=false),
+     *              @OA\Property(property="message", type="string", example="Validasi error"),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error",
+     *      ),
+     *  )
+     */
     public function register(Request $request)
     {
         $input = $request->all();
@@ -32,7 +98,7 @@ class AuthController extends Controller
         if ($request->hasFile('avatar')) {
             $input['avatar'] = rand() . '.' . request()->avatar->getClientOriginalExtension();
 
-            request()->avatar->move(public_path('assets/images/avatar/'), $input['avatar']);
+            request()->avatar->move(public_path('storage/images/avatar/'), $input['avatar']);
         }
 
         $user = User::create([
@@ -54,6 +120,73 @@ class AuthController extends Controller
         return $this->responseSuccess('Registrasi berhasil', $data, 201);
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/login",
+     *      operationId="authLogin",
+     *      tags={"Auth"},
+     *      summary="User Login",
+     *      description="Login User Here",
+     *      @OA\RequestBody(
+     *          @OA\JsonContent(
+     *              type="object",
+     *              required={"email", "password"},
+     *              @OA\Property(property="email", type="email", example="siswa@gmail.com"),
+     *              @OA\Property(property="password", type="password", example="Password`")
+     *          ),
+     *          @OA\MediaType(
+     *              mediaType="multipart/form-data",
+     *              @OA\Schema(
+     *                  type="object",
+     *                  required={"email", "password"},
+     *                  @OA\Property(property="email", type="email", example="siswa@gmail.com"),
+     *                  @OA\Property(property="password", type="password", example="Password`")
+     *              ),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Login success",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string", example="Login berhasil"),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object",
+     *                  example={
+     *                      "user": {
+     *                          "id": 1,
+     *                          "name": "siswa",
+     *                          "email": "siswa@gmail.com",
+     *                          "email_verified_at": "2022-08-29T06:19:06.000000Z",
+     *                          "role": "siswa",
+     *                          "avatar": null,
+     *                          "number": null,
+     *                          "last_seen": "2022-08-29T08:34:52.370167Z",
+     *                          "created_at": "2022-08-29T06:19:06.000000Z",
+     *                          "updated_at": "2022-08-29T08:34:52.000000Z"
+     *                      }
+     *                  }
+     *              ),
+     *              @OA\Property(property="token", type="string", example="2|pqLrmURrF0SmemD1TROWlWB1VIaUg1PE9r0uSf69"),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Incorrect email or password",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=false),
+     *              @OA\Property(property="message", type="string", example="Email atau password anda salah"),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error",
+     *      ),
+     *   )
+     */
     public function login(Request $request)
     {
         $input = $request->validate([
@@ -78,6 +211,33 @@ class AuthController extends Controller
         return $this->responseSuccess('Login berhasil', $data, 200);
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/logout",
+     *      operationId="authLogout",
+     *      tags={"Auth"},
+     *      summary="User Logout",
+     *      description="Logout User Here",
+     *      security={{"sanctum":{}}},
+     *      @OA\Response(
+     *          response=200,
+     *          description="Logout success",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string", example="Logout berhasil"),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthorized",
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error",
+     *      ),
+     *  )
+     */
     public function logout(Request $request)
     {
         auth()->user()->tokens()->delete();

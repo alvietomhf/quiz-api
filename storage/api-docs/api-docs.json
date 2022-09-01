@@ -1,0 +1,3609 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "QuizApp API Documentation",
+        "contact": {
+            "email": "haykalcs@gmail.com"
+        },
+        "version": "1"
+    },
+    "paths": {
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User Register",
+                "description": "Register User Here",
+                "operationId": "authRegister",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "email",
+                                        "example": "johndoe@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "password",
+                                        "example": "Password`"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "password",
+                                        "example": "Password`"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "enum": [
+                                            "siswa",
+                                            "guru"
+                                        ],
+                                        "example": "siswa"
+                                    },
+                                    "avatar": {
+                                        "type": "file"
+                                    },
+                                    "number": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object",
+                                "nullable": [
+                                    "avatar",
+                                    "number"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Register success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Registrasi berhasil"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "user": {
+                                                    "name": "John Doe",
+                                                    "email": "johndoe@gmail.com",
+                                                    "email_verified_at": "2022-08-29T06:19:06.000000Z",
+                                                    "role": "siswa",
+                                                    "avatar": "1255762734.jpg",
+                                                    "number": 2,
+                                                    "created_at": "2022-08-29T06:19:06.000000Z",
+                                                    "updated_at": "2022-08-29T08:34:52.000000Z",
+                                                    "id": 8
+                                                }
+                                            }
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "2|pqLrmURrF0SmemD1TROWlWB1VIaUg1PE9r0uSf69"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User Login",
+                "description": "Login User Here",
+                "operationId": "authLogin",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "email",
+                                        "example": "siswa@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "password",
+                                        "example": "Password`"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "email",
+                                        "example": "siswa@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "password",
+                                        "example": "Password`"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login berhasil"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "user": {
+                                                    "id": 1,
+                                                    "name": "siswa",
+                                                    "email": "siswa@gmail.com",
+                                                    "email_verified_at": "2022-08-29T06:19:06.000000Z",
+                                                    "role": "siswa",
+                                                    "avatar": null,
+                                                    "number": null,
+                                                    "last_seen": "2022-08-29T08:34:52.370167Z",
+                                                    "created_at": "2022-08-29T06:19:06.000000Z",
+                                                    "updated_at": "2022-08-29T08:34:52.000000Z"
+                                                }
+                                            }
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "2|pqLrmURrF0SmemD1TROWlWB1VIaUg1PE9r0uSf69"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Incorrect email or password",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email atau password anda salah"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User Logout",
+                "description": "Logout User Here",
+                "operationId": "authLogout",
+                "responses": {
+                    "200": {
+                        "description": "Logout success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logout berhasil"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/feeds": {
+            "get": {
+                "tags": [
+                    "Feeds"
+                ],
+                "summary": "Get List of Feeds",
+                "description": "Get List of Feeds",
+                "operationId": "getFeedsList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    },
+                                                    "image": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "user": {
+                                                        "type": "object"
+                                                    },
+                                                    "replies": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "feed_id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "user_id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "message": {
+                                                                    "type": "string"
+                                                                },
+                                                                "image": {
+                                                                    "type": "string"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                },
+                                                                "updated_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                },
+                                                                "user": {
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "id": 1,
+                                                    "user_id": 1,
+                                                    "message": "Hi there!",
+                                                    "image": "2079572408.jpg",
+                                                    "created_at": "2021-10-10T12:05:19.000000Z",
+                                                    "updated_at": "2021-10-10T12:05:19.000000Z",
+                                                    "user": {
+                                                        "id": 1,
+                                                        "name": "John Doe",
+                                                        "email": "johndoe@gmail.com"
+                                                    },
+                                                    "replies": [
+                                                        {
+                                                            "id": 1,
+                                                            "feed_id": 1,
+                                                            "user_id": 1,
+                                                            "message": "Hallo there!",
+                                                            "image": "2093156899.jpg",
+                                                            "created_at": "2021-10-10T12:07:08.000000Z",
+                                                            "updated_at": "2021-10-10T12:07:08.000000Z",
+                                                            "user": {
+                                                                "id": 1,
+                                                                "name": "Mike",
+                                                                "email": "mike@gmail.com"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Feeds"
+                ],
+                "summary": "Store Feed in DB",
+                "description": "Store Feed in DB",
+                "operationId": "storeFeed",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "message"
+                                ],
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Hi there!"
+                                    },
+                                    "image": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object",
+                                "nullable": [
+                                    "image"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "user_id": 2,
+                                                "message": "Hi there!",
+                                                "image": "1172193584.jpg",
+                                                "updated_at": "2021-09-26T13:00:59.000000Z",
+                                                "created_at": "2021-09-26T13:00:59.000000Z",
+                                                "id": 3
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/feeds/{feedId}/reply": {
+            "post": {
+                "tags": [
+                    "Feeds"
+                ],
+                "summary": "Store Reply in DB",
+                "description": "Store Reply in DB",
+                "operationId": "storeReply",
+                "parameters": [
+                    {
+                        "name": "feedId",
+                        "in": "path",
+                        "description": "Id of Feed",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "message"
+                                ],
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Hallo there!"
+                                    },
+                                    "image": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object",
+                                "nullable": [
+                                    "image"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "user_id": 2,
+                                                "feed_id": 1,
+                                                "message": "Hallo there!",
+                                                "image": "1172193584.jpg",
+                                                "updated_at": "2021-09-26T13:00:59.000000Z",
+                                                "created_at": "2021-09-26T13:00:59.000000Z",
+                                                "id": 4
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/materi": {
+            "get": {
+                "tags": [
+                    "Materi"
+                ],
+                "summary": "Get List of Materi",
+                "description": "Get List of Materi",
+                "operationId": "getMateriList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "subject": {
+                                                        "type": "string"
+                                                    },
+                                                    "competency": {
+                                                        "type": "string"
+                                                    },
+                                                    "class": {
+                                                        "type": "string"
+                                                    },
+                                                    "semester": {
+                                                        "type": "string"
+                                                    },
+                                                    "meet": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "user": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "id": 1,
+                                                    "user_id": 2,
+                                                    "subject": "IPA",
+                                                    "competence": "Mendeskripsikan tata surya",
+                                                    "class": "VI",
+                                                    "semester": "2",
+                                                    "meet": "1",
+                                                    "description": "Penjelasan materi tata surya",
+                                                    "image_banner": "1830621834.jpg",
+                                                    "created_at": "2021-09-26T12:56:48.000000Z",
+                                                    "updated_at": "2021-09-26T13:00:38.000000Z",
+                                                    "user": {
+                                                        "id": 2,
+                                                        "name": "guru",
+                                                        "email": "guru@gmail.com",
+                                                        "avatar": null
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/materi/{id}": {
+            "get": {
+                "tags": [
+                    "Materi"
+                ],
+                "summary": "Get Materi Detail",
+                "description": "Get Materi Detail",
+                "operationId": "showMateri",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of Materi",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detail data"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": 1,
+                                                "user_id": 2,
+                                                "subject": "IPA",
+                                                "competence": "Mendeskripsikan tata surya",
+                                                "class": "VI",
+                                                "semester": "2",
+                                                "meet": "1",
+                                                "description": "Penjelasan materi tata surya",
+                                                "image_banner": "1830621834.jpg",
+                                                "created_at": "2021-09-26T12:56:48.000000Z",
+                                                "updated_at": "2021-09-26T13:00:38.000000Z",
+                                                "user": {
+                                                    "id": 2,
+                                                    "name": "guru",
+                                                    "email": "guru@gmail.com",
+                                                    "avatar": null
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guru/materi": {
+            "post": {
+                "tags": [
+                    "Materi"
+                ],
+                "summary": "Store Materi in DB",
+                "description": "Store Materi in DB",
+                "operationId": "storeMateri",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "subject",
+                                    "competence",
+                                    "class",
+                                    "semester",
+                                    "meet",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "subject": {
+                                        "type": "string",
+                                        "example": "IPA"
+                                    },
+                                    "competence": {
+                                        "type": "string",
+                                        "example": "Mendeskripsikan tata surya"
+                                    },
+                                    "class": {
+                                        "type": "string",
+                                        "example": "VI"
+                                    },
+                                    "semester": {
+                                        "type": "string",
+                                        "example": "2"
+                                    },
+                                    "meet": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Penjelasan materi tata surya"
+                                    },
+                                    "image_banner": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object",
+                                "nullable": [
+                                    "image_banner"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "user_id": 2,
+                                                "subject": "IPA",
+                                                "competence": "Mendeskripsikan tata suryaa",
+                                                "class": "VI",
+                                                "semester": "2",
+                                                "meet": "1",
+                                                "description": "Penjelasan materi tata surya",
+                                                "image_banner": "1172193584.jpg",
+                                                "updated_at": "2021-09-26T13:00:59.000000Z",
+                                                "created_at": "2021-09-26T13:00:59.000000Z",
+                                                "id": 2
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guru/materi/{id}": {
+            "post": {
+                "tags": [
+                    "Materi"
+                ],
+                "summary": "Update Materi in DB",
+                "description": "Update Materi in DB",
+                "operationId": "updateMateri",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of Materi",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "description": "Spoofing put method",
+                        "schema": {
+                            "type": "string",
+                            "default": "PUT"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "subject",
+                                    "competence",
+                                    "class",
+                                    "semester",
+                                    "meet",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "subject": {
+                                        "type": "string",
+                                        "example": "IPA"
+                                    },
+                                    "competence": {
+                                        "type": "string",
+                                        "example": "Mendeskripsikan tata surya"
+                                    },
+                                    "class": {
+                                        "type": "string",
+                                        "example": "VI"
+                                    },
+                                    "semester": {
+                                        "type": "string",
+                                        "example": "2"
+                                    },
+                                    "meet": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Penjelasan materi tata surya"
+                                    },
+                                    "image_banner": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object",
+                                "nullable": [
+                                    "image_banner"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data berhasil diubah"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": 2,
+                                                "user_id": 2,
+                                                "subject": "IPA",
+                                                "competence": "Mendeskripsikan tata suryaa",
+                                                "class": "VI",
+                                                "semester": "2",
+                                                "meet": "1",
+                                                "description": "Penjelasan materi tata surya",
+                                                "image_banner": "1172193584.jpg",
+                                                "updated_at": "2021-09-26T13:00:59.000000Z",
+                                                "created_at": "2021-09-26T13:00:59.000000Z"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Materi"
+                ],
+                "summary": "Delete Materi",
+                "description": "Delete Materi",
+                "operationId": "destroyMateri",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of Materi",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guru/materi/{id}/image": {
+            "delete": {
+                "tags": [
+                    "Materi"
+                ],
+                "summary": "Delete Materi Image",
+                "description": "Delete Materi Image",
+                "operationId": "deleteImageMateri",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of Materi",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gambar berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Image not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/quizzes": {
+            "get": {
+                "tags": [
+                    "Quizzes"
+                ],
+                "summary": "Get List of Quizzes",
+                "description": "Get List of Quizzes",
+                "operationId": "getQuizList",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Type of quizzes",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "quiz",
+                            "enum": [
+                                "quiz",
+                                "essay"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "slug": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    },
+                                                    "deadline": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "banner": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "questions": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "quiz_id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "question": {
+                                                                    "type": "string"
+                                                                },
+                                                                "file": {
+                                                                    "type": "string"
+                                                                },
+                                                                "options": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "properties": {
+                                                                            "id": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "question_id": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "title": {
+                                                                                "type": "string"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "id": 1,
+                                                    "title": "First Quiz",
+                                                    "slug": "first-quiz-615dbbd9b550c",
+                                                    "type": "quiz",
+                                                    "deadline": "2021-10-11 22:08:09",
+                                                    "banner": "1585923272.png",
+                                                    "created_at": "2021-10-06T15:08:09.000000Z",
+                                                    "updated_at": "2021-10-06T15:08:09.000000Z",
+                                                    "questions": [
+                                                        {
+                                                            "id": 1,
+                                                            "quiz_id": 1,
+                                                            "question": "Question One",
+                                                            "file": "173709104.jpg",
+                                                            "options": [
+                                                                {
+                                                                    "id": 1,
+                                                                    "question_id": 1,
+                                                                    "title": "Option A"
+                                                                },
+                                                                {
+                                                                    "id": 2,
+                                                                    "question_id": 1,
+                                                                    "title": "Option B"
+                                                                },
+                                                                {
+                                                                    "id": 3,
+                                                                    "question_id": 1,
+                                                                    "title": "Option C"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guru/quizzes": {
+            "post": {
+                "tags": [
+                    "Quizzes"
+                ],
+                "summary": "Store Quiz in DB",
+                "description": "Store Quiz in DB",
+                "operationId": "storeQuiz",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "type",
+                                    "deadline",
+                                    "questions"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "First Quiz"
+                                    },
+                                    "type": {
+                                        "description": "If type `quiz` options field inside questions are required. Else, don't attach options property in request.",
+                                        "type": "string",
+                                        "enum": [
+                                            "quiz",
+                                            "essay"
+                                        ],
+                                        "example": "quiz"
+                                    },
+                                    "deadline": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2022-10-11 22:08:09"
+                                    },
+                                    "banner": {
+                                        "description": "Image or `null`.",
+                                        "type": "file",
+                                        "example": null
+                                    },
+                                    "questions": {
+                                        "required": [
+                                            "question"
+                                        ],
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "question": {
+                                                    "type": "string",
+                                                    "example": "Question One"
+                                                },
+                                                "file": {
+                                                    "description": "File or `null`.",
+                                                    "type": "file",
+                                                    "example": null
+                                                },
+                                                "options": {
+                                                    "description": "Required if type `quiz`.",
+                                                    "required": [
+                                                        "title",
+                                                        "correct"
+                                                    ],
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Option A"
+                                                            },
+                                                            "correct": {
+                                                                "type": "integer",
+                                                                "enum": [
+                                                                    1,
+                                                                    0
+                                                                ],
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "example": [
+                                            {
+                                                "question": "Question One",
+                                                "file": null,
+                                                "options": [
+                                                    {
+                                                        "title": "Option A",
+                                                        "correct": 1
+                                                    },
+                                                    {
+                                                        "title": "Option B",
+                                                        "correct": 0
+                                                    },
+                                                    {
+                                                        "title": "Option C",
+                                                        "correct": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "question": "Question Two",
+                                                "file": null,
+                                                "options": [
+                                                    {
+                                                        "title": "Option A",
+                                                        "correct": 1
+                                                    },
+                                                    {
+                                                        "title": "Option B",
+                                                        "correct": 0
+                                                    },
+                                                    {
+                                                        "title": "Option C",
+                                                        "correct": 0
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "nullable": [
+                                            "file",
+                                            "options"
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "nullable": [
+                                    "banner"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": 1,
+                                                "title": "First Quiz",
+                                                "slug": "first-quiz-615dbbd9b550c",
+                                                "type": "quiz",
+                                                "deadline": "2021-10-11 22:08:09",
+                                                "banner": "1585923272.png",
+                                                "created_at": "2021-10-06T15:08:09.000000Z",
+                                                "updated_at": "2021-10-06T15:08:09.000000Z",
+                                                "questions": [
+                                                    {
+                                                        "id": 1,
+                                                        "quiz_id": 1,
+                                                        "question": "Question One",
+                                                        "file": "173709104.jpg",
+                                                        "options": [
+                                                            {
+                                                                "id": 1,
+                                                                "question_id": 1,
+                                                                "title": "Option A",
+                                                                "correct": 0
+                                                            },
+                                                            {
+                                                                "id": 2,
+                                                                "question_id": 1,
+                                                                "title": "Option B",
+                                                                "correct": 0
+                                                            },
+                                                            {
+                                                                "id": 3,
+                                                                "question_id": 1,
+                                                                "title": "Option C",
+                                                                "correct": 1
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/quizzes/{slug}": {
+            "get": {
+                "tags": [
+                    "Quizzes"
+                ],
+                "summary": "Get Quizzes Detail",
+                "description": "Get Quizzes Detail",
+                "operationId": "showQuizzes",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of Quizzes",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "first-quiz-630ee5b27b98e"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detail data"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": 1,
+                                                "title": "First Quiz",
+                                                "slug": "first-quiz-615dbbd9b550c",
+                                                "type": "quiz",
+                                                "deadline": "2021-10-11 22:08:09",
+                                                "banner": "1585923272.png",
+                                                "created_at": "2021-10-06T15:08:09.000000Z",
+                                                "updated_at": "2021-10-06T15:08:09.000000Z",
+                                                "questions": [
+                                                    {
+                                                        "id": 1,
+                                                        "quiz_id": 1,
+                                                        "question": "Question One",
+                                                        "file": "173709104.jpg",
+                                                        "options": [
+                                                            {
+                                                                "id": 1,
+                                                                "question_id": 1,
+                                                                "title": "Option A",
+                                                                "correct": 1
+                                                            },
+                                                            {
+                                                                "id": 2,
+                                                                "question_id": 1,
+                                                                "title": "Option B",
+                                                                "correct": 0
+                                                            },
+                                                            {
+                                                                "id": 3,
+                                                                "question_id": 1,
+                                                                "title": "Option C",
+                                                                "correct": 0
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Already submitted this quizzes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guru/quizzes/{slug}": {
+            "post": {
+                "tags": [
+                    "Quizzes"
+                ],
+                "summary": "Update Quiz in DB",
+                "description": "Update Quiz in DB",
+                "operationId": "updateQuiz",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of Materi",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "first-quiz-630ee5b27b98e"
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "description": "Spoofing put method",
+                        "schema": {
+                            "type": "string",
+                            "default": "PUT"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "type",
+                                    "deadline",
+                                    "questions"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "First Quiz Update"
+                                    },
+                                    "type": {
+                                        "description": "If type `quiz` options field inside questions are required. Else, don't attach options property in request.",
+                                        "type": "string",
+                                        "enum": [
+                                            "quiz",
+                                            "essay"
+                                        ],
+                                        "example": "quiz"
+                                    },
+                                    "deadline": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2022-10-11 22:08:09"
+                                    },
+                                    "banner": {
+                                        "description": "Image or `null`.",
+                                        "type": "file",
+                                        "example": null
+                                    },
+                                    "questions": {
+                                        "required": [
+                                            "id",
+                                            "question"
+                                        ],
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "Set to `-1` to add new data",
+                                                    "type": "integer",
+                                                    "example": "1"
+                                                },
+                                                "question": {
+                                                    "type": "string",
+                                                    "example": "Question One"
+                                                },
+                                                "file": {
+                                                    "description": "File or `null`.",
+                                                    "type": "file",
+                                                    "example": null
+                                                },
+                                                "options": {
+                                                    "description": "Required if type `quiz`.",
+                                                    "required": [
+                                                        "id",
+                                                        "title",
+                                                        "correct"
+                                                    ],
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "Set to `-1` to add new data",
+                                                                "type": "integer",
+                                                                "example": "1"
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Option A"
+                                                            },
+                                                            "correct": {
+                                                                "type": "integer",
+                                                                "enum": [
+                                                                    1,
+                                                                    0
+                                                                ],
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "example": [
+                                            {
+                                                "id": 1,
+                                                "question": "Question One Update",
+                                                "file": null,
+                                                "options": [
+                                                    {
+                                                        "id": 1,
+                                                        "title": "Option A Update",
+                                                        "correct": 1
+                                                    },
+                                                    {
+                                                        "id": 2,
+                                                        "title": "Option B Update",
+                                                        "correct": 0
+                                                    },
+                                                    {
+                                                        "id": 3,
+                                                        "title": "Option C Update",
+                                                        "correct": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 2,
+                                                "question": "Question Two Update",
+                                                "file": null,
+                                                "options": [
+                                                    {
+                                                        "id": 4,
+                                                        "title": "Option A Update",
+                                                        "correct": 1
+                                                    },
+                                                    {
+                                                        "id": 5,
+                                                        "title": "Option B Update",
+                                                        "correct": 0
+                                                    },
+                                                    {
+                                                        "id": 6,
+                                                        "title": "Option C Update",
+                                                        "correct": 0
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "nullable": [
+                                            "file",
+                                            "options"
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "nullable": [
+                                    "banner"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data berhasil diubah"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": 1,
+                                                "title": "First Quiz Update",
+                                                "slug": "first-quiz-615dbbd9b550c",
+                                                "type": "quiz",
+                                                "deadline": "2021-10-11 22:08:09",
+                                                "banner": "1585923272.png",
+                                                "created_at": "2021-10-06T15:08:09.000000Z",
+                                                "updated_at": "2021-10-06T15:08:09.000000Z",
+                                                "questions": [
+                                                    {
+                                                        "id": 1,
+                                                        "quiz_id": 1,
+                                                        "question": "Question One Update",
+                                                        "file": "173709104.jpg",
+                                                        "options": [
+                                                            {
+                                                                "id": 1,
+                                                                "question_id": 1,
+                                                                "title": "Option A Update",
+                                                                "correct": 0
+                                                            },
+                                                            {
+                                                                "id": 2,
+                                                                "question_id": 1,
+                                                                "title": "Option B Update",
+                                                                "correct": 0
+                                                            },
+                                                            {
+                                                                "id": 3,
+                                                                "question_id": 1,
+                                                                "title": "Option C Update",
+                                                                "correct": 1
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Quizzes"
+                ],
+                "summary": "Delete Quizzes",
+                "description": "Delete Quizzes",
+                "operationId": "destroyQuizzes",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of Materi",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "first-quiz-630ee5b27b98e"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guru/quizzes/questions/{id}/file": {
+            "delete": {
+                "tags": [
+                    "Quizzes"
+                ],
+                "summary": "Delete Question File",
+                "description": "Delete Question File",
+                "operationId": "deleteFileQuestion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of Question",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "File berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Image not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guru/quizzes/options/{id}": {
+            "delete": {
+                "tags": [
+                    "Quizzes"
+                ],
+                "summary": "Delete Options",
+                "description": "Delete Options",
+                "operationId": "destroyOptions",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of Options",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pilihan berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/siswa/result/{slug}/quiz": {
+            "post": {
+                "tags": [
+                    "Results"
+                ],
+                "summary": "Store Quiz Answer in DB",
+                "description": "Store Quiz Answer in DB",
+                "operationId": "storeQuizAnswer",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of Quiz",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "first-quiz-630ee5b27b98e"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "data"
+                                ],
+                                "properties": {
+                                    "data": {
+                                        "required": [
+                                            "id",
+                                            "quiz_id",
+                                            "options"
+                                        ],
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "quiz_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "options": {
+                                                    "required": [
+                                                        "id",
+                                                        "question_id",
+                                                        "title",
+                                                        "selected"
+                                                    ],
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "question_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Option A"
+                                                            },
+                                                            "selected": {
+                                                                "type": "integer",
+                                                                "enum": [
+                                                                    1,
+                                                                    0
+                                                                ],
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "example": [
+                                            {
+                                                "id": 1,
+                                                "quiz_id": 1,
+                                                "options": [
+                                                    {
+                                                        "id": 1,
+                                                        "question_id": 1,
+                                                        "title": "Option A",
+                                                        "selected": 1
+                                                    },
+                                                    {
+                                                        "id": 2,
+                                                        "question_id": 1,
+                                                        "title": "Option B",
+                                                        "selected": 0
+                                                    },
+                                                    {
+                                                        "id": 3,
+                                                        "question_id": 1,
+                                                        "title": "Option C",
+                                                        "selected": 0
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Jawaban berhasil disimpan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": [
+                                                "Validasi error",
+                                                "User sudah mengerjakan quiz ini",
+                                                "Waktu pengerjaan telah lewat"
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/siswa/result/{slug}/essay": {
+            "post": {
+                "tags": [
+                    "Results"
+                ],
+                "summary": "Store Essay Answer in DB",
+                "description": "Store Essay Answer in DB",
+                "operationId": "storeEssayAnswer",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of Essay",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "first-essay-630ee82c7a9da"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "question_id"
+                                ],
+                                "properties": {
+                                    "question_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "comment": {
+                                        "type": "string",
+                                        "example": "Has been submitted"
+                                    },
+                                    "file": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object",
+                                "nullable": [
+                                    "comment",
+                                    "file"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Jawaban berhasil disimpan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": [
+                                                "Validasi error",
+                                                "Waktu pengerjaan telah lewat"
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guru/result/{slug}/notsubmitted": {
+            "get": {
+                "tags": [
+                    "Results"
+                ],
+                "summary": "Get List Student Not Submitted Result",
+                "description": "Get List Student Not Submitted Result",
+                "operationId": "getStudentNotSubmittedResult",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of Quizzes",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "first-quiz-630ee5b27b98e"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "email": {
+                                                        "type": "email"
+                                                    },
+                                                    "avatar": {
+                                                        "type": "string"
+                                                    },
+                                                    "number": {
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "John",
+                                                    "email": "john@gmail.com",
+                                                    "avatar": "2079572408.jpg",
+                                                    "number": 1
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "name": "Doe",
+                                                    "email": "doe@gmail.com",
+                                                    "avatar": null,
+                                                    "number": null
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guru/result/{slug}/quiz": {
+            "get": {
+                "tags": [
+                    "Results"
+                ],
+                "summary": "Get List Quiz Result",
+                "description": "Get List Quiz Result",
+                "operationId": "getQuizResult",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of Quizzes",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "first-quiz-630ee5b27b98e"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "email": {
+                                                        "type": "email"
+                                                    },
+                                                    "avatar": {
+                                                        "type": "string"
+                                                    },
+                                                    "number": {
+                                                        "type": "integer"
+                                                    },
+                                                    "results": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "user_id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "quiz_id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "score": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                },
+                                                                "result_quizzes": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "properties": {
+                                                                            "id": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "result_id": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "question_id": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "correct": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "question": {
+                                                                                "type": "object"
+                                                                            },
+                                                                            "option": {
+                                                                                "type": "object"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "siswa",
+                                                    "email": "siswa@gmail.com",
+                                                    "avatar": "1727520681.jpg",
+                                                    "number": null,
+                                                    "results": [
+                                                        {
+                                                            "id": 1,
+                                                            "user_id": 1,
+                                                            "quiz_id": 1,
+                                                            "score": 10,
+                                                            "created_at": "2022-08-31T09:14:18.000000Z",
+                                                            "result_quizzes": [
+                                                                {
+                                                                    "id": 1,
+                                                                    "result_id": 1,
+                                                                    "question_id": 1,
+                                                                    "option_id": 1,
+                                                                    "correct": 1,
+                                                                    "question": {
+                                                                        "id": 1,
+                                                                        "question": "Question One Update"
+                                                                    },
+                                                                    "option": {
+                                                                        "id": 1,
+                                                                        "title": "Option A"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guru/result/{slug}/essay": {
+            "get": {
+                "tags": [
+                    "Results"
+                ],
+                "summary": "Get List Essay Result",
+                "description": "Get List Essay Result",
+                "operationId": "getEssayResult",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of Quizzes",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "first-essay-630ee82c7a9da"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "email": {
+                                                        "type": "email"
+                                                    },
+                                                    "avatar": {
+                                                        "type": "string"
+                                                    },
+                                                    "number": {
+                                                        "type": "integer"
+                                                    },
+                                                    "results": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "user_id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "quiz_id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "score": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                },
+                                                                "result_essays": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "properties": {
+                                                                            "id": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "result_id": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "question_id": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "comment": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "file": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "question": {
+                                                                                "type": "object"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "siswa",
+                                                    "email": "siswa@gmail.com",
+                                                    "avatar": "1727520681.jpg",
+                                                    "number": null,
+                                                    "results": [
+                                                        {
+                                                            "id": 1,
+                                                            "user_id": 1,
+                                                            "quiz_id": 1,
+                                                            "score": 10,
+                                                            "created_at": "2022-08-31T09:14:18.000000Z",
+                                                            "result_essays": [
+                                                                {
+                                                                    "id": 1,
+                                                                    "result_id": 1,
+                                                                    "question_id": 1,
+                                                                    "comment": null,
+                                                                    "file": "2016581590.pdf",
+                                                                    "question": {
+                                                                        "id": 1,
+                                                                        "question": "Question One Update"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guru/result/{id}": {
+            "put": {
+                "tags": [
+                    "Results"
+                ],
+                "summary": "Store Essay Result Score in DB",
+                "description": "Store Essay Result Score in DB",
+                "operationId": "storeEssayResultScore",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of Result",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "score"
+                                ],
+                                "properties": {
+                                    "score": {
+                                        "type": "integer",
+                                        "example": 100
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Score berhasil dibuat"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/siswa/result": {
+            "get": {
+                "tags": [
+                    "Results"
+                ],
+                "summary": "Get List Student Result",
+                "description": "Get List Student Result",
+                "operationId": "geStudentResult",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "example": [
+                                                {
+                                                    "id": 1,
+                                                    "user_id": 1,
+                                                    "quiz_id": 1,
+                                                    "score": 10,
+                                                    "created_at": "2021-09-15T08:55:53.000000Z",
+                                                    "updated_at": "2021-09-15T08:55:53.000000Z",
+                                                    "quiz": {
+                                                        "id": 1,
+                                                        "title": "First Quiz Update",
+                                                        "slug": "first-quiz-630ee5b27b98e",
+                                                        "type": "quiz",
+                                                        "banner": null
+                                                    },
+                                                    "result_quizzes": [
+                                                        {
+                                                            "id": 1,
+                                                            "result_id": 1,
+                                                            "question_id": 1,
+                                                            "option_id": 1,
+                                                            "correct": 1,
+                                                            "question": {
+                                                                "id": 1,
+                                                                "question": "Question One Update"
+                                                            },
+                                                            "option": {
+                                                                "id": 1,
+                                                                "title": "Option A"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "result_essays": []
+                                                },
+                                                {
+                                                    "id": 4,
+                                                    "user_id": 1,
+                                                    "quiz_id": 2,
+                                                    "score": 100,
+                                                    "created_at": "2021-09-15T08:55:53.000000Z",
+                                                    "updated_at": "2021-09-15T08:55:53.000000Z",
+                                                    "quiz": {
+                                                        "id": 2,
+                                                        "title": "First Essay",
+                                                        "slug": "first-essay-630ee82c7a9da",
+                                                        "type": "essay",
+                                                        "banner": null
+                                                    },
+                                                    "result_quizzes": [],
+                                                    "result_essays": [
+                                                        {
+                                                            "id": 3,
+                                                            "result_id": 4,
+                                                            "question_id": 3,
+                                                            "comment": "Has been submitted",
+                                                            "file": "2016581590.pdf",
+                                                            "question": {
+                                                                "id": 3,
+                                                                "question": "Question One"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/students": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get List of Students",
+                "description": "Get List of Students",
+                "operationId": "getStudentsList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data list siswa"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "required": [
+                                                    "id",
+                                                    "name",
+                                                    "email"
+                                                ],
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "format": "email"
+                                                    },
+                                                    "avatar": {
+                                                        "type": "string"
+                                                    },
+                                                    "number": {
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "id": 2,
+                                                    "name": "Alex",
+                                                    "email": "alex@gmail.com",
+                                                    "avatar": null,
+                                                    "number": null
+                                                },
+                                                {
+                                                    "id": 3,
+                                                    "name": "Bill",
+                                                    "email": "bill@gmail.com",
+                                                    "avatar": "1850228838.jpg",
+                                                    "number": 1
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get List of All Users",
+                "description": "Get List of All Users",
+                "operationId": "getUsersList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Seluruh user"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "required": [
+                                                    "id",
+                                                    "name",
+                                                    "email",
+                                                    "role",
+                                                    "created_at",
+                                                    "updated_at"
+                                                ],
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "format": "email"
+                                                    },
+                                                    "email_verified_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "role": {
+                                                        "type": "string"
+                                                    },
+                                                    "avatar": {
+                                                        "type": "string"
+                                                    },
+                                                    "number": {
+                                                        "type": "integer"
+                                                    },
+                                                    "last_seen": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "id": 2,
+                                                    "name": "Kira",
+                                                    "email": "kira@gmail.com",
+                                                    "email_verified_at": "2021-09-15T08:14:28.000000Z",
+                                                    "role": "guru",
+                                                    "avatar": null,
+                                                    "number": null,
+                                                    "last_seen": "2021-09-20 02:56:55",
+                                                    "created_at": "2021-09-15T08:14:28.000000Z",
+                                                    "updated_at": "2021-09-20T02:56:55.000000Z"
+                                                },
+                                                {
+                                                    "id": 3,
+                                                    "name": "John Doe",
+                                                    "email": "johndoe@gmail.com",
+                                                    "email_verified_at": "2021-09-15T08:14:28.000000Z",
+                                                    "role": "siswa",
+                                                    "avatar": "1850228838.jpg",
+                                                    "number": 1,
+                                                    "last_seen": "2021-09-20 02:56:55",
+                                                    "created_at": "2021-09-15T08:14:28.000000Z",
+                                                    "updated_at": "2021-09-20T02:56:55.000000Z"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/teachers": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get List of Teachers",
+                "description": "Get List of Teachers",
+                "operationId": "getTeachersList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data list guru"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "required": [
+                                                    "id",
+                                                    "name",
+                                                    "email"
+                                                ],
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "format": "email"
+                                                    },
+                                                    "avatar": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "id": 2,
+                                                    "name": "Kira",
+                                                    "email": "kira@gmail.com",
+                                                    "avatar": null
+                                                },
+                                                {
+                                                    "id": 3,
+                                                    "name": "Mita",
+                                                    "email": "mita@gmail.com",
+                                                    "avatar": "1850228838.jpg"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get User Detail",
+                "description": "Get User Detail",
+                "operationId": "showUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of User",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data user"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": 3,
+                                                "name": "John Doe",
+                                                "email": "johndoe@gmail.com",
+                                                "email_verified_at": "2021-09-15T08:14:28.000000Z",
+                                                "role": "siswa",
+                                                "avatar": "1850228838.jpg",
+                                                "number": 1,
+                                                "last_seen": "2021-09-20 02:56:55",
+                                                "created_at": "2021-09-15T08:14:28.000000Z",
+                                                "updated_at": "2021-09-20T02:56:55.000000Z"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/users/status": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get Users Status",
+                "description": "Get Users Status",
+                "operationId": "showUserStatus",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Berhasil mendapatkan data"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "required": [
+                                                    "id",
+                                                    "name",
+                                                    "email",
+                                                    "role",
+                                                    "online"
+                                                ],
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "format": "email"
+                                                    },
+                                                    "role": {
+                                                        "type": "string"
+                                                    },
+                                                    "avatar": {
+                                                        "type": "string"
+                                                    },
+                                                    "number": {
+                                                        "type": "integer"
+                                                    },
+                                                    "last_seen": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "online": {
+                                                        "type": "boolean"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "id": 2,
+                                                    "name": "Kira",
+                                                    "email": "kira@gmail.com",
+                                                    "role": "siswa",
+                                                    "avatar": null,
+                                                    "number": 1,
+                                                    "last_seen": "2021-09-20 02:56:55",
+                                                    "online": false
+                                                },
+                                                {
+                                                    "id": 3,
+                                                    "name": "Mita",
+                                                    "email": "mita@gmail.com",
+                                                    "role": "guru",
+                                                    "avatar": "1850228838.jpg",
+                                                    "number": 1,
+                                                    "last_seen": "2021-09-20 02:56:55",
+                                                    "online": true
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    }
+}
